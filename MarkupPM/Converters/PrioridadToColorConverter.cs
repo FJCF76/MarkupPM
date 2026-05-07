@@ -9,11 +9,12 @@ public class PrioridadToColorConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        return (PrioridadTarea)value switch
+        if (value is not PrioridadTarea prioridad) return Binding.DoNothing;
+        return prioridad switch
         {
-            PrioridadTarea.Alta  => new SolidColorBrush(Color.FromRgb(239, 83, 80)),
-            PrioridadTarea.Baja  => new SolidColorBrush(Color.FromRgb(102, 187, 106)),
-            _                    => new SolidColorBrush(Color.FromRgb(255, 152, 0))
+            PrioridadTarea.Alta => new SolidColorBrush(Color.FromRgb(239,  83,  80)),
+            PrioridadTarea.Baja => new SolidColorBrush(Color.FromRgb(102, 187, 106)),
+            _                   => new SolidColorBrush(Color.FromRgb(255, 152,   0))
         };
     }
 

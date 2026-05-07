@@ -148,7 +148,17 @@ public partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand]
-    public void SelectTarea(TareaViewModel? tarea) => SelectedTarea = tarea;
+    public void SelectTarea(TareaViewModel? tarea)
+    {
+        if (SelectedTarea is not null)
+            SelectedTarea.PropertyChanged -= OnSelectedTareaPropertyChanged;
+        SelectedTarea = tarea;
+        if (tarea is not null)
+            tarea.PropertyChanged += OnSelectedTareaPropertyChanged;
+    }
+
+    private void OnSelectedTareaPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        => MarkDirty();
 
     [RelayCommand]
     public void ClosePanel() => SelectedTarea = null;
