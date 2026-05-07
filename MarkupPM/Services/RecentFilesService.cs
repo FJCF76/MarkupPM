@@ -18,7 +18,7 @@ public class RecentFilesService : IRecentFilesService
         _recent = Load();
     }
 
-    public IReadOnlyList<string> GetRecent() => _recent.AsReadOnly();
+    public IReadOnlyList<string> GetRecent() => _recent.Where(File.Exists).ToList().AsReadOnly();
 
     public void AddRecent(string filePath)
     {

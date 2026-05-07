@@ -32,7 +32,7 @@ public partial class TareaViewModel : ObservableObject
         set
         {
             Fecha = value.HasValue ? DateOnly.FromDateTime(value.Value) : null;
-            OnPropertyChanged();
+            OnPropertyChanged(nameof(FechaAsDateTime));
             OnPropertyChanged(nameof(FechaDisplay));
             OnPropertyChanged(nameof(FechaVencida));
         }

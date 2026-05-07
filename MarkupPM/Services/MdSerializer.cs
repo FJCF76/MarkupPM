@@ -55,6 +55,6 @@ public class MdSerializer : IMdSerializer
         return sb.ToString();
     }
 
-    private static string EscapeInline(string s) => s.Replace("<!--", "&#x3C;!--");
+    private static string EscapeInline(string s) => s.Replace("<!--", "&#x3C;!--").Replace("-->", "--&#x3E;");
     private static string EscapeAttr(string s) => s.Replace(" ", "_").Replace(">", "").Replace("<", "");
 }
