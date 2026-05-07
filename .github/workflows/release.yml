@@ -1,0 +1,101 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+env:
+  PROJECT: MarkupPM/MarkupPM.csproj
+  CONFIGURATION: Release
+  PLATFORM: x64
+
+jobs:
+  build-msix:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          $tag = "${{ github.ref_name }}"
+          $ver4 = $tag.TrimStart('v') + ".0"
+          $ver3 = $tag.TrimStart('v')
+          echo "VERSION4=$ver4" >> $env:GITHUB_ENV
+          echo "VERSION3=$ver3" >> $env:GITHUB_ENV
+
+      - name: Update manifest version
+        run: |
+          $manifest = "MarkupPM\Package.appxmanifest"
+          (Get-Content $manifest) -replace 'Version="[^"]*"', "Version=`"${{ env.VERSION4 }}`"" |
+            Set-Content $manifest
+
+      - name: Update csproj version
+        run: |
+          $csproj = "MarkupPM\MarkupPM.csproj"
+          (Get-Content $csproj) -replace '<Version>.*</Version>', "<Version>${{ env.VERSION3 }}</Version>" |
+            Set-Content $csproj
+
+      - name: Create self-signed cert
+        run: |
+          $cert = New-SelfSignedCertificate -Type Custom -Subject "CN=MarkupPM-Dev" `
+            -KeyUsage DigitalSignature -FriendlyName "MarkupPM Dev" `
+            -CertStoreLocation "Cert:\CurrentUser\My" `
+            -TextExtension @("2.5.29.37={text}1.3.6.1.5.5.7.3.3", "2.5.29.19={text}")
+          $pwd = ConvertTo-SecureString -String "DevOnly" -Force -AsPlainText
+          Export-PfxCertificate -Cert $cert -FilePath ".\DevCert.pfx" -Password $pwd
+          echo "CERT_THUMBPRINT=$($cert.Thumbprint)" >> $env:GITHUB_ENV
+
+      - name: Build MSIX (sideload artifact)
+        run: |
+          msbuild "${{ env.PROJECT }}" `
+            /p:Configuration=${{ env.CONFIGURATION }} `
+            /p:Platform=${{ env.PLATFORM }} `
+            /p:UapAppxPackageBuildMode=SideLoadOnly `
+            /p:AppxBundle=Never `
+            /p:PackageCertificateThumbprint="${{ env.CERT_THUMBPRINT }}" `
+            /p:PackageCertificateKeyFile=".\DevCert.pfx" `
+            /p:PackageCertificatePassword="DevOnly" `
+            /t:Publish
+
+      - name: Build MSIX (Store upload)
+        run: |
+          msbuild "${{ env.PROJECT }}" `
+            /p:Configuration=${{ env.CONFIGURATION }} `
+            /p:Platform=${{ env.PLATFORM }} `
+            /p:UapAppxPackageBuildMode=StoreUpload `
+            /p:AppxBundle=Never `
+            /p:PackageCertificateThumbprint="${{ env.CERT_THUMBPRINT }}" `
+            /p:PackageCertificateKeyFile=".\DevCert.pfx" `
+            /p:PackageCertificatePassword="DevOnly" `
+            /t:Publish
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: MarkupPM-${{ github.ref_name }}
+          path: |
+            **/*.msix
+            **/*.msixupload
+          retention-days: 30
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: "**/*.msix"
+          body: |
+            ## MarkupPM ${{ github.ref_name }}
+
+            Descarga el `.msix` solo para testing local (firma de desarrollo).
+            La versión oficial está disponible en **Microsoft Store**.
+
+            Para instalar la versión de testing, habilita "Instalar desde fuentes externas" en Windows.

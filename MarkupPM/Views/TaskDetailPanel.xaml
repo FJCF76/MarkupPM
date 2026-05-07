@@ -1,0 +1,127 @@
+<UserControl x:Class="MarkupPM.Views.TaskDetailPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:converters="clr-namespace:MarkupPM.Converters"
+             xmlns:models="clr-namespace:MarkupPM.Models"
+             Width="320">
+    <UserControl.Resources>
+        <converters:EstadoToColorConverter x:Key="EstadoColor"/>
+        <converters:PrioridadToColorConverter x:Key="PrioridadColor"/>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVis"/>
+    </UserControl.Resources>
+
+    <Border BorderThickness="1,0,0,0"
+            BorderBrush="{DynamicResource MaterialDesign.Brush.DataGrid.ColumnHeader.Border}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Panel header -->
+            <Border Grid.Row="0" Padding="14,10"
+                    BorderThickness="0,0,0,1"
+                    BorderBrush="{DynamicResource MaterialDesign.Brush.DataGrid.ColumnHeader.Border}">
+                <DockPanel>
+                    <TextBlock Text="Detalle de tarea" FontSize="12"
+                               Foreground="{DynamicResource MaterialDesign.Brush.ForegroundLight}"
+                               VerticalAlignment="Center"/>
+                    <Button DockPanel.Dock="Right"
+                            Style="{StaticResource MaterialDesignIconButton}"
+                            Command="{Binding DataContext.ClosePanelCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                            Width="28" Height="28" Padding="4"
+                            ToolTip="Cerrar panel (Esc)">
+                        <materialDesign:PackIcon Kind="Close" Width="16" Height="16"/>
+                    </Button>
+                </DockPanel>
+            </Border>
+
+            <!-- Scrollable fields -->
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                <StackPanel Margin="14">
+
+                    <!-- Task name -->
+                    <TextBox Text="{Binding Nombre, UpdateSourceTrigger=PropertyChanged}"
+                             Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                             materialDesign:HintAssist.Hint="Nombre de la tarea"
+                             FontSize="14" FontWeight="Medium"
+                             TextWrapping="Wrap" AcceptsReturn="False"
+                             Margin="0,0,0,14"/>
+
+                    <!-- Estado + Prioridad -->
+                    <Grid Margin="0,0,0,14">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="8"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="ESTADO" FontSize="10" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource MaterialDesign.Brush.ForegroundLight}"
+                                       Margin="0,0,0,4"/>
+                            <ComboBox ItemsSource="{Binding Source={x:Static models:EstadoTareaValues.All}}"
+                                      SelectedItem="{Binding Estado}"
+                                      Style="{StaticResource MaterialDesignOutlinedComboBox}"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="PRIORIDAD" FontSize="10" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource MaterialDesign.Brush.ForegroundLight}"
+                                       Margin="0,0,0,4"/>
+                            <ComboBox ItemsSource="{Binding Source={x:Static models:PrioridadTareaValues.All}}"
+                                      SelectedItem="{Binding Prioridad}"
+                                      Style="{StaticResource MaterialDesignOutlinedComboBox}"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Responsable + Fecha -->
+                    <Grid Margin="0,0,0,14">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="8"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox Grid.Column="0"
+                                 Text="{Binding Responsable, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                 materialDesign:HintAssist.Hint="Responsable"/>
+
+                        <DatePicker Grid.Column="2"
+                                    SelectedDate="{Binding FechaAsDateTime}"
+                                    Style="{StaticResource MaterialDesignOutlinedDatePicker}"
+                                    materialDesign:HintAssist.Hint="Fecha límite"/>
+                    </Grid>
+
+                    <!-- Notas -->
+                    <StackPanel>
+                        <TextBlock Text="NOTAS" FontSize="10" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource MaterialDesign.Brush.ForegroundLight}"
+                                   Margin="0,0,0,4"/>
+                        <TextBox Text="{Binding Notas, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                 AcceptsReturn="True" TextWrapping="Wrap"
+                                 MinHeight="80" VerticalScrollBarVisibility="Auto"
+                                 materialDesign:HintAssist.Hint="Notas sobre esta tarea..."/>
+                    </StackPanel>
+
+                </StackPanel>
+            </ScrollViewer>
+
+            <!-- Footer: delete -->
+            <Border Grid.Row="2" Padding="14,10"
+                    BorderThickness="0,1,0,0"
+                    BorderBrush="{DynamicResource MaterialDesign.Brush.DataGrid.ColumnHeader.Border}">
+                <Button Style="{StaticResource MaterialDesignOutlinedButton}"
+                        Foreground="#EF9A9A" BorderBrush="#C62828"
+                        Command="{Binding DataContext.DeleteSelectedTareaCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                        HorizontalAlignment="Stretch" Padding="8,6">
+                    🗑 Eliminar tarea
+                </Button>
+            </Border>
+        </Grid>
+    </Border>
+</UserControl>
