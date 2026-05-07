@@ -1,40 +1,114 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!-- Status bar style -->
+    <!-- ═══════════════════════ COLOR TOKENS ═══════════════════════ -->
+    <SolidColorBrush x:Key="UnsavedIndicatorBrush"    Color="#FF9800"/>
+    <SolidColorBrush x:Key="OverdueDateBrush"         Color="#EF5350"/>
+    <SolidColorBrush x:Key="DangerForegroundBrush"    Color="#EF9A9A"/>
+    <SolidColorBrush x:Key="DangerBorderBrush"        Color="#C62828"/>
+
+    <!-- ═══════════════════════ TEXT STYLES ═══════════════════════ -->
+
+    <!-- Status bar + small labels -->
     <Style x:Key="StatusBarText" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="11"/>
+        <Setter Property="FontSize"          Value="11"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
-        <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.ForegroundLight}"/>
+        <Setter Property="Foreground"        Value="{DynamicResource MaterialDesign.Brush.ForegroundLight}"/>
     </Style>
 
-    <!-- Phase header text -->
+    <!-- Phase section header -->
     <Style x:Key="PhaseHeaderText" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontSize"   Value="14"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
     </Style>
 
-    <!-- Task name in row -->
+    <!-- Task name in list row -->
     <Style x:Key="TaskRowName" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="12"/>
-        <Setter Property="TextTrimming" Value="CharacterEllipsis"/>
+        <Setter Property="FontSize"         Value="12"/>
+        <Setter Property="TextTrimming"     Value="CharacterEllipsis"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
     </Style>
 
-    <!-- Small muted text -->
+    <!-- Small muted secondary text -->
     <Style x:Key="MutedText" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="11"/>
-        <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.ForegroundLight}"/>
+        <Setter Property="FontSize"          Value="11"/>
+        <Setter Property="Foreground"        Value="{DynamicResource MaterialDesign.Brush.ForegroundLight}"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
     </Style>
+
+    <!-- Field label (ESTADO, PRIORIDAD, NOTAS …) in detail panel -->
+    <Style x:Key="FieldLabel" TargetType="TextBlock">
+        <Setter Property="FontSize"   Value="10"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Foreground" Value="{DynamicResource MaterialDesign.Brush.ForegroundLight}"/>
+        <Setter Property="Margin"     Value="0,0,0,4"/>
+    </Style>
+
+    <!-- Empty-state icon (large emoji/glyph) -->
+    <Style x:Key="EmptyStateIcon" TargetType="TextBlock">
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="Opacity"             Value="0.3"/>
+        <Setter Property="Margin"              Value="0,0,0,12"/>
+    </Style>
+
+    <!-- Empty-state primary message -->
+    <Style x:Key="EmptyStateTitle" TargetType="TextBlock">
+        <Setter Property="FontSize"            Value="15"/>
+        <Setter Property="FontWeight"          Value="SemiBold"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="Margin"              Value="0,0,0,6"/>
+    </Style>
+
+    <!-- Empty-state secondary description -->
+    <Style x:Key="EmptyStateDescription" TargetType="TextBlock">
+        <Setter Property="FontSize"            Value="12"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="TextAlignment"       Value="Center"/>
+        <Setter Property="TextWrapping"        Value="Wrap"/>
+        <Setter Property="Foreground"          Value="{DynamicResource MaterialDesign.Brush.ForegroundLight}"/>
+    </Style>
+
+    <!-- ═══════════════════════ SHAPE STYLES ═══════════════════════ -->
 
     <!-- Unsaved indicator dot -->
     <Style x:Key="UnsavedDot" TargetType="Ellipse">
-        <Setter Property="Width" Value="8"/>
-        <Setter Property="Height" Value="8"/>
-        <Setter Property="Fill" Value="#FF9800"/>
+        <Setter Property="Width"             Value="7"/>
+        <Setter Property="Height"            Value="7"/>
+        <Setter Property="Fill"              Value="{StaticResource UnsavedIndicatorBrush}"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
-        <Setter Property="Margin" Value="0,0,4,0"/>
+        <Setter Property="Margin"            Value="0,0,5,0"/>
+    </Style>
+
+    <!-- Assignee initials avatar circle -->
+    <Style x:Key="AvatarCircle" TargetType="Border">
+        <Setter Property="Width"        Value="26"/>
+        <Setter Property="Height"       Value="26"/>
+        <Setter Property="CornerRadius" Value="13"/>
+        <Setter Property="Background"   Value="{DynamicResource PrimaryHueLightBrush}"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+
+    <!-- ═══════════════════════ CONTAINER STYLES ═══════════════════════ -->
+
+    <!-- Task row border with hover highlight -->
+    <Style x:Key="TaskRowBorder" TargetType="Border">
+        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+        <Setter Property="BorderBrush"     Value="{DynamicResource MaterialDesign.Brush.DataGrid.ColumnHeader.Border}"/>
+        <Setter Property="Padding"         Value="0,6"/>
+        <Setter Property="Cursor"          Value="Hand"/>
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.DataGrid.RowHoverBackground}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <!-- Danger (delete) outlined button -->
+    <Style x:Key="DangerButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignOutlinedButton}">
+        <Setter Property="Foreground"          Value="{StaticResource DangerForegroundBrush}"/>
+        <Setter Property="BorderBrush"         Value="{StaticResource DangerBorderBrush}"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="Padding"             Value="8,6"/>
     </Style>
 
 </ResourceDictionary>

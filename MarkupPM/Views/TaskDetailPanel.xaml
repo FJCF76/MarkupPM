@@ -59,18 +59,14 @@
                         </Grid.ColumnDefinitions>
 
                         <StackPanel Grid.Column="0">
-                            <TextBlock Text="ESTADO" FontSize="10" FontWeight="SemiBold"
-                                       Foreground="{DynamicResource MaterialDesign.Brush.ForegroundLight}"
-                                       Margin="0,0,0,4"/>
+                            <TextBlock Text="ESTADO" Style="{StaticResource FieldLabel}"/>
                             <ComboBox ItemsSource="{Binding Source={x:Static models:EstadoTareaValues.All}}"
                                       SelectedItem="{Binding Estado}"
                                       Style="{StaticResource MaterialDesignOutlinedComboBox}"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="2">
-                            <TextBlock Text="PRIORIDAD" FontSize="10" FontWeight="SemiBold"
-                                       Foreground="{DynamicResource MaterialDesign.Brush.ForegroundLight}"
-                                       Margin="0,0,0,4"/>
+                            <TextBlock Text="PRIORIDAD" Style="{StaticResource FieldLabel}"/>
                             <ComboBox ItemsSource="{Binding Source={x:Static models:PrioridadTareaValues.All}}"
                                       SelectedItem="{Binding Prioridad}"
                                       Style="{StaticResource MaterialDesignOutlinedComboBox}"/>
@@ -98,9 +94,7 @@
 
                     <!-- Notas -->
                     <StackPanel>
-                        <TextBlock Text="NOTAS" FontSize="10" FontWeight="SemiBold"
-                                   Foreground="{DynamicResource MaterialDesign.Brush.ForegroundLight}"
-                                   Margin="0,0,0,4"/>
+                        <TextBlock Text="NOTAS" Style="{StaticResource FieldLabel}"/>
                         <TextBox Text="{Binding Notas, UpdateSourceTrigger=PropertyChanged}"
                                  Style="{StaticResource MaterialDesignOutlinedTextBox}"
                                  AcceptsReturn="True" TextWrapping="Wrap"
@@ -115,10 +109,8 @@
             <Border Grid.Row="2" Padding="14,10"
                     BorderThickness="0,1,0,0"
                     BorderBrush="{DynamicResource MaterialDesign.Brush.DataGrid.ColumnHeader.Border}">
-                <Button Style="{StaticResource MaterialDesignOutlinedButton}"
-                        Foreground="#EF9A9A" BorderBrush="#C62828"
-                        Command="{Binding DataContext.DeleteSelectedTareaCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                        HorizontalAlignment="Stretch" Padding="8,6">
+                <Button Style="{StaticResource DangerButton}"
+                        Command="{Binding DataContext.DeleteSelectedTareaCommand, RelativeSource={RelativeSource AncestorType=Window}}">
                     🗑 Eliminar tarea
                 </Button>
             </Border>

@@ -43,7 +43,7 @@
             <DockPanel>
                 <!-- App logo + name -->
                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" Margin="0,0,16,0">
-                    <Border Width="26" Height="26" Background="#7c4dff" CornerRadius="4"
+                    <Border Width="26" Height="26" Background="{DynamicResource PrimaryHueMidBrush}" CornerRadius="4"
                             Margin="0,0,8,0">
                         <TextBlock Text="MP" FontSize="11" FontWeight="Bold"
                                    Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
@@ -82,7 +82,7 @@
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center"
                                 Visibility="{Binding IsDirty, Converter={StaticResource BoolToVis}}"
                                 Margin="0,0,12,0">
-                        <Ellipse Width="7" Height="7" Fill="#FF9800" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                        <Ellipse Style="{StaticResource UnsavedDot}"/>
                         <TextBlock Text="{Binding FileNameDisplay}" FontSize="12"
                                    Foreground="White" Opacity="0.8" VerticalAlignment="Center"/>
                     </StackPanel>
@@ -95,7 +95,8 @@
                     <Button Style="{StaticResource MaterialDesignIconButton}"
                             Click="ThemeToggle_Click"
                             Width="34" Height="34"
-                            ToolTip="Cambiar tema claro/oscuro">
+                            ToolTip="Cambiar tema claro/oscuro"
+                            AutomationProperties.Name="Cambiar tema claro/oscuro">
                         <materialDesign:PackIcon Kind="WeatherNight" Width="18" Height="18" Foreground="White"/>
                     </Button>
                 </StackPanel>
@@ -168,12 +169,10 @@
                 <!-- Empty phases hint -->
                 <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center"
                             Visibility="{Binding HasFases, Converter={StaticResource InvBoolToVis}}">
-                    <TextBlock Text="📂" FontSize="40" HorizontalAlignment="Center" Opacity="0.3" Margin="0,0,0,12"/>
-                    <TextBlock Text="Sin fases todavía" FontSize="15" FontWeight="SemiBold"
-                               HorizontalAlignment="Center" Margin="0,0,0,6"/>
-                    <TextBlock Text="Las fases organizan tu proyecto en etapas." FontSize="12"
-                               HorizontalAlignment="Center"
-                               Foreground="{DynamicResource MaterialDesign.Brush.ForegroundLight}"/>
+                    <TextBlock Text="📂" FontSize="40" Style="{StaticResource EmptyStateIcon}"/>
+                    <TextBlock Text="Sin fases todavía" Style="{StaticResource EmptyStateTitle}"/>
+                    <TextBlock Text="Las fases organizan tu proyecto en etapas."
+                               Style="{StaticResource EmptyStateDescription}"/>
                     <Button Style="{StaticResource MaterialDesignRaisedButton}"
                             Command="{Binding AddFaseCommand}"
                             Margin="0,16,0,0" HorizontalAlignment="Center">
@@ -196,7 +195,8 @@
                                                     Command="{Binding DataContext.RemoveFaseCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                     CommandParameter="{Binding}"
                                                     Width="26" Height="26" Padding="3" Opacity="0.5"
-                                                    ToolTip="Eliminar fase">
+                                                    ToolTip="Eliminar fase"
+                                                    AutomationProperties.Name="Eliminar fase">
                                                 <materialDesign:PackIcon Kind="Delete" Width="14" Height="14"/>
                                             </Button>
                                             <TextBlock Text="{Binding TaskCountLabel}"
@@ -233,10 +233,7 @@
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate DataType="{x:Type vm:TareaViewModel}">
                                                     <Border x:Name="TaskRow"
-                                                            BorderThickness="0,0,0,1"
-                                                            BorderBrush="{DynamicResource MaterialDesign.Brush.DataGrid.ColumnHeader.Border}"
-                                                            Padding="0,6"
-                                                            Cursor="Hand">
+                                                            Style="{StaticResource TaskRowBorder}">
                                                         <Border.InputBindings>
                                                             <MouseBinding MouseAction="LeftClick"
                                                                           Command="{Binding DataContext.SelectTareaCommand, RelativeSource={RelativeSource AncestorType=Window}}"
@@ -281,9 +278,7 @@
                                                             </Border>
                                                             <!-- Assignee initials -->
                                                             <Border Grid.Column="4"
-                                                                    Width="26" Height="26" CornerRadius="13"
-                                                                    Background="{DynamicResource PrimaryHueLightBrush}"
-                                                                    VerticalAlignment="Center">
+                                                                    Style="{StaticResource AvatarCircle}">
                                                                 <TextBlock Text="{Binding Iniciales}"
                                                                            FontSize="9" FontWeight="Bold"
                                                                            HorizontalAlignment="Center"
@@ -298,7 +293,7 @@
                                                                     <Style TargetType="TextBlock" BasedOn="{StaticResource MutedText}">
                                                                         <Style.Triggers>
                                                                             <DataTrigger Binding="{Binding FechaVencida}" Value="True">
-                                                                                <Setter Property="Foreground" Value="#EF5350"/>
+                                                                                <Setter Property="Foreground" Value="{StaticResource OverdueDateBrush}"/>
                                                                                 <Setter Property="FontWeight" Value="Medium"/>
                                                                             </DataTrigger>
                                                                         </Style.Triggers>
@@ -306,15 +301,6 @@
                                                                 </TextBlock.Style>
                                                             </TextBlock>
                                                         </Grid>
-                                                        <Border.Style>
-                                                            <Style TargetType="Border">
-                                                                <Style.Triggers>
-                                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                                        <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.DataGrid.RowHoverBackground}"/>
-                                                                    </Trigger>
-                                                                </Style.Triggers>
-                                                            </Style>
-                                                        </Border.Style>
                                                     </Border>
                                                 </DataTemplate>
                                             </ItemsControl.ItemTemplate>
@@ -345,7 +331,7 @@
         <StatusBar Grid.Row="2">
             <StatusBarItem>
                 <StackPanel Orientation="Horizontal">
-                    <Ellipse Width="7" Height="7" Fill="#FF9800" VerticalAlignment="Center" Margin="0,0,5,0"
+                    <Ellipse Style="{StaticResource UnsavedDot}"
                              Visibility="{Binding IsDirty, Converter={StaticResource BoolToVis}}"/>
                     <TextBlock Style="{StaticResource StatusBarText}"
                                Visibility="{Binding IsDirty, Converter={StaticResource BoolToVis}}">
