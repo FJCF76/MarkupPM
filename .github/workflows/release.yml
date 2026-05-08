@@ -12,6 +12,7 @@ env:
   PROJECT: MarkupPM/MarkupPM.csproj
   CONFIGURATION: Release
   PLATFORM: x64
+  PACKAGE_DIR: ${{ github.workspace }}\artifacts\AppPackages\
 
 jobs:
   build-msix:
@@ -68,6 +69,7 @@ jobs:
             /p:Platform=${{ env.PLATFORM }} `
             /p:UapAppxPackageBuildMode=SideLoadOnly `
             /p:AppxBundle=Never `
+            /p:AppxPackageDir="${{ env.PACKAGE_DIR }}" `
             /p:PackageCertificateThumbprint="${{ env.CERT_THUMBPRINT }}" `
             /p:PackageCertificateKeyFile=".\DevCert.pfx" `
             /p:PackageCertificatePassword="DevOnly" `
@@ -80,24 +82,31 @@ jobs:
             /p:Platform=${{ env.PLATFORM }} `
             /p:UapAppxPackageBuildMode=StoreUpload `
             /p:AppxBundle=Never `
+            /p:AppxPackageDir="${{ env.PACKAGE_DIR }}" `
             /p:PackageCertificateThumbprint="${{ env.CERT_THUMBPRINT }}" `
             /p:PackageCertificateKeyFile=".\DevCert.pfx" `
             /p:PackageCertificatePassword="DevOnly" `
             /t:Publish
+
+      - name: List packaged files
+        shell: pwsh
+        run: Get-ChildItem -Path "${{ env.PACKAGE_DIR }}" -Recurse -File | Select-Object FullName
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: MarkupPM-${{ github.ref_name }}
           path: |
-            **/*.msix
-            **/*.msixupload
+            ${{ env.PACKAGE_DIR }}**/*.msix
+            ${{ env.PACKAGE_DIR }}**/*.msixupload
           retention-days: 30
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: "**/*.msix"
+          files: |
+            ${{ env.PACKAGE_DIR }}**/*.msix
+            ${{ env.PACKAGE_DIR }}**/*.msixupload
           body: |
             ## MarkupPM ${{ github.ref_name }}
 
