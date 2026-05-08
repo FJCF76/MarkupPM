@@ -19,6 +19,8 @@ public partial class TareaViewModel : ObservableObject
 
     public string Id => _model.Id;
 
+    partial void OnResponsableChanged(string value) => OnPropertyChanged(nameof(Iniciales));
+
     public string Iniciales => string.IsNullOrWhiteSpace(Responsable)
         ? "—"
         : string.Concat(Responsable.Split(' ', StringSplitOptions.RemoveEmptyEntries)
