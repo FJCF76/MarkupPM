@@ -191,6 +191,7 @@
                                  FontSize="18" FontWeight="SemiBold"
                                  Visibility="{Binding IsEditingProjectName, Converter={StaticResource BoolToVis}}"
                                  x:Name="ProjectNameBox"
+                                 IsVisibleChanged="RenameBox_IsVisibleChanged"
                                  LostFocus="ProjectNameBox_LostFocus"
                                  KeyDown="ProjectNameBox_KeyDown"/>
                     </Grid>
@@ -257,6 +258,7 @@
                                                      FontSize="14" FontWeight="SemiBold"
                                                      Visibility="{Binding IsEditingName, Converter={StaticResource BoolToVis}}"
                                                      x:Name="PhaseNameBox"
+                                                     IsVisibleChanged="RenameBox_IsVisibleChanged"
                                                      LostFocus="PhaseNameBox_LostFocus"
                                                      KeyDown="PhaseNameBox_KeyDown"/>
                                         </DockPanel>
