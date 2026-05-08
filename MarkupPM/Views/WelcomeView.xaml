@@ -26,7 +26,11 @@
                 <Button Style="{StaticResource MaterialDesignOutlinedButton}"
                         Command="{Binding AbrirArchivoCommand}"
                         Padding="16,8">
-                    📂 Abrir .md existente
+                    <StackPanel Orientation="Horizontal">
+                        <materialDesign:PackIcon Kind="FolderOpenOutline" Width="18" Height="18"
+                                                  VerticalAlignment="Center" Margin="0,0,6,0"/>
+                        <TextBlock Text="Abrir .md existente" VerticalAlignment="Center"/>
+                    </StackPanel>
                 </Button>
             </StackPanel>
 
