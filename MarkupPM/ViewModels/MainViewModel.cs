@@ -94,6 +94,7 @@ public partial class MainViewModel : ObservableObject, IDropTarget
             Proyecto = _parser.Parse(md);
             FilePath = path;
             _recentFiles.AddRecent(path);
+            WelcomeVm.RefreshRecientes();
             RebuildFases();
             HasProyecto = true;
             IsDirty = false;
@@ -253,6 +254,7 @@ public partial class MainViewModel : ObservableObject, IDropTarget
             File.WriteAllText(path, md);
             FilePath = path;
             _recentFiles.AddRecent(path);
+            WelcomeVm.RefreshRecientes();
             IsDirty = false;
             OnPropertyChanged(nameof(TituloVentana));
             OnPropertyChanged(nameof(FileNameDisplay));
