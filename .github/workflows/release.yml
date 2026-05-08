@@ -12,7 +12,7 @@ env:
   PROJECT: MarkupPM/MarkupPM.csproj
   CONFIGURATION: Release
   PLATFORM: x64
-  PACKAGE_DIR: ${{ github.workspace }}\artifacts\AppPackages\
+  PACKAGE_DIR: ${{ github.workspace }}\MarkupPM\AppPackages\
 
 jobs:
   build-msix:
@@ -67,30 +67,38 @@ jobs:
           msbuild "${{ env.PROJECT }}" `
             /p:Configuration=${{ env.CONFIGURATION }} `
             /p:Platform=${{ env.PLATFORM }} `
+            /p:GenerateAppxPackageOnBuild=true `
             /p:UapAppxPackageBuildMode=SideLoadOnly `
             /p:AppxBundle=Never `
             /p:AppxPackageDir="${{ env.PACKAGE_DIR }}" `
             /p:PackageCertificateThumbprint="${{ env.CERT_THUMBPRINT }}" `
             /p:PackageCertificateKeyFile=".\DevCert.pfx" `
             /p:PackageCertificatePassword="DevOnly" `
-            /t:Publish
+            /t:Build
 
       - name: Build MSIX (Store upload)
         run: |
           msbuild "${{ env.PROJECT }}" `
             /p:Configuration=${{ env.CONFIGURATION }} `
             /p:Platform=${{ env.PLATFORM }} `
+            /p:GenerateAppxPackageOnBuild=true `
             /p:UapAppxPackageBuildMode=StoreUpload `
             /p:AppxBundle=Never `
             /p:AppxPackageDir="${{ env.PACKAGE_DIR }}" `
             /p:PackageCertificateThumbprint="${{ env.CERT_THUMBPRINT }}" `
             /p:PackageCertificateKeyFile=".\DevCert.pfx" `
             /p:PackageCertificatePassword="DevOnly" `
-            /t:Publish
+            /t:Build
 
       - name: List packaged files
         shell: pwsh
-        run: Get-ChildItem -Path "${{ env.PACKAGE_DIR }}" -Recurse -File | Select-Object FullName
+        run: |
+          if (Test-Path "${{ env.PACKAGE_DIR }}") {
+            Get-ChildItem -Path "${{ env.PACKAGE_DIR }}" -Recurse -File | Select-Object FullName
+          }
+          else {
+            Write-Host "No package directory found at: ${{ env.PACKAGE_DIR }}"
+          }
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
