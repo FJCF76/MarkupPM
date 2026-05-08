@@ -60,6 +60,13 @@ public partial class FaseViewModel : ObservableObject
         Tareas.Remove(tareaVm);
     }
 
+    public void InsertTarea(TareaViewModel tareaVm, int index)
+    {
+        var clamped = Math.Clamp(index, 0, Tareas.Count);
+        _model.Tareas.Insert(Math.Clamp(index, 0, _model.Tareas.Count), tareaVm.Model);
+        Tareas.Insert(clamped, tareaVm);
+    }
+
     public void SyncToModel()
     {
         _model.Nombre = Nombre;

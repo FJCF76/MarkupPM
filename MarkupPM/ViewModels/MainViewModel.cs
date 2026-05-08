@@ -3,13 +3,14 @@ using System.IO;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using GongSolutions.Wpf.DragDrop;
 using MarkupPM.Models;
 using MarkupPM.Services;
 using Microsoft.Win32;
 
 namespace MarkupPM.ViewModels;
 
-public partial class MainViewModel : ObservableObject
+public partial class MainViewModel : ObservableObject, IDropTarget
 {
     private readonly IMdParser _parser;
     private readonly IMdSerializer _serializer;
@@ -148,14 +149,7 @@ public partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand]
-    public void SelectTarea(TareaViewModel? tarea)
-    {
-        if (SelectedTarea is not null)
-            SelectedTarea.PropertyChanged -= OnSelectedTareaPropertyChanged;
-        SelectedTarea = tarea;
-        if (tarea is not null)
-            tarea.PropertyChanged += OnSelectedTareaPropertyChanged;
-    }
+    public void SelectTarea(TareaViewModel? tarea) => SelectedTarea = tarea;
 
     private void OnSelectedTareaPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         => MarkDirty();
@@ -247,8 +241,12 @@ public partial class MainViewModel : ObservableObject
             fvm.SyncToModel();
     }
 
-    partial void OnSelectedTareaChanged(TareaViewModel? value)
+    partial void OnSelectedTareaChanged(TareaViewModel? oldValue, TareaViewModel? newValue)
     {
+        if (oldValue is not null)
+            oldValue.PropertyChanged -= OnSelectedTareaPropertyChanged;
+        if (newValue is not null)
+            newValue.PropertyChanged += OnSelectedTareaPropertyChanged;
         OnPropertyChanged(nameof(TituloVentana));
     }
 
@@ -257,5 +255,44 @@ public partial class MainViewModel : ObservableObject
         OnPropertyChanged(nameof(TituloVentana));
         GuardarCommand.NotifyCanExecuteChanged();
         GuardarComoCommand.NotifyCanExecuteChanged();
+    }
+
+    public void DragOver(IDropInfo dropInfo)
+    {
+        if (dropInfo.Data is TareaViewModel)
+        {
+            dropInfo.DropTargetAdorner = DropTargetAdorners.Insert;
+            dropInfo.Effects = System.Windows.DragDropEffects.Move;
+        }
+    }
+
+    public void Drop(IDropInfo dropInfo)
+    {
+        if (dropInfo.Data is not TareaViewModel tarea) return;
+
+        var sourceFase = Fases.FirstOrDefault(f => f.Tareas.Contains(tarea));
+        if (sourceFase is null) return;
+
+        var targetFase = Fases.FirstOrDefault(f =>
+            dropInfo.TargetCollection is ObservableCollection<TareaViewModel> col &&
+            ReferenceEquals(f.Tareas, col)) ?? sourceFase;
+
+        var insertIndex = Math.Clamp(dropInfo.InsertIndex, 0, targetFase.Tareas.Count);
+
+        if (ReferenceEquals(sourceFase, targetFase))
+        {
+            var current = sourceFase.Tareas.IndexOf(tarea);
+            if (current < 0 || current == insertIndex || current == insertIndex - 1) return;
+            if (current < insertIndex) insertIndex--;
+            sourceFase.Tareas.Move(current, Math.Clamp(insertIndex, 0, sourceFase.Tareas.Count - 1));
+            sourceFase.Model.Tareas = [.. sourceFase.Tareas.Select(t => t.Model)];
+        }
+        else
+        {
+            sourceFase.RemoveTarea(tarea);
+            targetFase.InsertTarea(tarea, insertIndex);
+        }
+
+        MarkDirty();
     }
 }
