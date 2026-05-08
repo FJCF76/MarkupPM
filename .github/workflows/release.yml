@@ -87,11 +87,11 @@ jobs:
           Copy-Item "MarkupPM\Assets\*" $assetsTarget -Recurse -Force
 
           $manifest = Get-Content $manifestSource -Raw
-          $manifest = $manifest -replace 'Name="[^"]*"', 'Name="FJCF76.MarkupPM"'
-          $manifest = $manifest -replace 'Publisher="[^"]*"', 'Publisher="CN=MarkupPM-Dev"'
+          $manifest = $manifest -replace 'Name="PLACEHOLDER.MarkupPM"', 'Name="FJCF76.MarkupPM"'
+          $manifest = $manifest -replace 'Publisher="CN=PLACEHOLDER"', 'Publisher="CN=MarkupPM-Dev"'
           $manifest = $manifest -replace 'Executable="\$targetnametoken\$\.exe"', 'Executable="MarkupPM.exe"'
           $manifest = $manifest -replace 'EntryPoint="\$targetentrypoint\$"', 'EntryPoint="Windows.FullTrustApplication"'
-          Set-Content -Path $manifestOut -Value $manifest -Encoding UTF8
+          [System.IO.File]::WriteAllText($manifestOut, $manifest, (New-Object System.Text.UTF8Encoding($false)))
 
           $makeAppx = Get-ChildItem "C:\Program Files (x86)\Windows Kits\10\bin" -Recurse -Filter makeappx.exe |
             Sort-Object FullName -Descending |
