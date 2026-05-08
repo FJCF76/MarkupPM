@@ -87,6 +87,8 @@ jobs:
           Copy-Item "MarkupPM\Assets\*" $assetsTarget -Recurse -Force
 
           $manifest = Get-Content $manifestSource -Raw
+          $manifest = $manifest.TrimStart([char]0xFEFF)
+          $manifest = [regex]::Replace($manifest, '^\s*<\?xml.*?\?>', '<?xml version="1.0" encoding="utf-8"?>')
           $manifest = $manifest -replace 'Name="PLACEHOLDER.MarkupPM"', 'Name="FJCF76.MarkupPM"'
           $manifest = $manifest -replace 'Publisher="CN=PLACEHOLDER"', 'Publisher="CN=MarkupPM-Dev"'
           $manifest = $manifest -replace 'Executable="\$targetnametoken\$\.exe"', 'Executable="MarkupPM.exe"'
