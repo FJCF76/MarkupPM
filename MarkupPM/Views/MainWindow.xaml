@@ -65,7 +65,11 @@
                             Command="{Binding AbrirDialogoCommand}"
                             Margin="0,0,6,0" Height="32" Padding="10,4"
                             ToolTip="Abrir archivo (Ctrl+O)">
-                        📂 Abrir
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="FolderOpenOutline" Width="16" Height="16"
+                                                      VerticalAlignment="Center" Margin="0,0,4,0"/>
+                            <TextBlock Text="Abrir" VerticalAlignment="Center"/>
+                        </StackPanel>
                     </Button>
                     <Separator Style="{StaticResource MaterialDesignLightSeparator}"
                                Width="1" Margin="4,4"/>
@@ -73,7 +77,11 @@
                             Command="{Binding GuardarCommand}"
                             Height="32" Padding="10,4"
                             ToolTip="Guardar (Ctrl+S)">
-                        💾 Guardar
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="ContentSaveOutline" Width="16" Height="16"
+                                                      VerticalAlignment="Center" Margin="0,0,4,0"/>
+                            <TextBlock Text="Guardar" VerticalAlignment="Center"/>
+                        </StackPanel>
                     </Button>
                 </StackPanel>
 
