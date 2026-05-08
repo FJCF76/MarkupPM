@@ -111,7 +111,11 @@
                     BorderBrush="{DynamicResource MaterialDesign.Brush.DataGrid.ColumnHeader.Border}">
                 <Button Style="{StaticResource DangerButton}"
                         Command="{Binding DataContext.DeleteSelectedTareaCommand, RelativeSource={RelativeSource AncestorType=Window}}">
-                    🗑 Eliminar tarea
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <materialDesign:PackIcon Kind="DeleteOutline" Width="16" Height="16"
+                                                  VerticalAlignment="Center" Margin="0,0,6,0"/>
+                        <TextBlock Text="Eliminar tarea" VerticalAlignment="Center"/>
+                    </StackPanel>
                 </Button>
             </Border>
         </Grid>
