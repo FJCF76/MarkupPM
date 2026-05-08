@@ -28,4 +28,10 @@
     <PackageReference Include="gong-wpf-dragdrop" Version="3.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- ApplicationIcon embeds the Win32 icon in the exe header, but WPF XAML
+         Icon="/Assets/app.ico" needs the file as an assembly Resource too. -->
+    <Resource Include="Assets\app.ico" />
+  </ItemGroup>
+
 </Project>
