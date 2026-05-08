@@ -21,6 +21,7 @@ public partial class MainViewModel : ObservableObject, IDropTarget
     [ObservableProperty] private bool _isDirty;
     [ObservableProperty] private string? _filePath;
     [ObservableProperty] private bool _hasProyecto;
+    [ObservableProperty] private bool _isEditingProjectName;
 
     public WelcomeViewModel WelcomeVm { get; }
 
@@ -28,8 +29,10 @@ public partial class MainViewModel : ObservableObject, IDropTarget
 
     public bool HasFases => Fases.Count > 0;
 
+    public int TotalTareas => Fases.Sum(f => f.Tareas.Count);
+
     public string TituloVentana => HasProyecto
-        ? $"{(IsDirty ? "● " : "")}{Proyecto?.Nombre ?? "Sin título"} — MarkupPM"
+        ? $"{(IsDirty ? "* " : "")}{Proyecto?.Nombre ?? "Sin título"} — MarkupPM"
         : "MarkupPM";
 
     public string FileNameDisplay => FilePath is not null
@@ -49,7 +52,11 @@ public partial class MainViewModel : ObservableObject, IDropTarget
             OnOpenRecent = AbrirArchivo
         };
 
-        Fases.CollectionChanged += (_, _) => OnPropertyChanged(nameof(HasFases));
+        Fases.CollectionChanged += (_, _) =>
+        {
+            OnPropertyChanged(nameof(HasFases));
+            OnPropertyChanged(nameof(TotalTareas));
+        };
     }
 
     [RelayCommand]
@@ -134,6 +141,7 @@ public partial class MainViewModel : ObservableObject, IDropTarget
         Proyecto.Fases.Add(fase);
         var vm = new FaseViewModel(fase);
         vm.PropertyChanged += (_, _) => MarkDirty();
+        vm.Tareas.CollectionChanged += (_, _) => OnPropertyChanged(nameof(TotalTareas));
         Fases.Add(vm);
         MarkDirty();
     }
@@ -152,10 +160,30 @@ public partial class MainViewModel : ObservableObject, IDropTarget
     public void SelectTarea(TareaViewModel? tarea) => SelectedTarea = tarea;
 
     private void OnSelectedTareaPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
-        => MarkDirty();
+    {
+        if (e.PropertyName != nameof(TareaViewModel.IsSelected))
+            MarkDirty();
+    }
 
     [RelayCommand]
     public void ClosePanel() => SelectedTarea = null;
+
+    [RelayCommand]
+    public void BeginRenamingProject() => IsEditingProjectName = true;
+
+    public void CommitProjectRename(string newName)
+    {
+        if (Proyecto is null) return;
+        if (string.IsNullOrWhiteSpace(newName))
+            OnPropertyChanged(nameof(Proyecto));
+        else
+        {
+            Proyecto.Nombre = newName.Trim();
+            MarkDirty();
+        }
+        IsEditingProjectName = false;
+        OnPropertyChanged(nameof(TituloVentana));
+    }
 
     [RelayCommand]
     public void AddTareaToFase(FaseViewModel faseVm)
@@ -211,6 +239,7 @@ public partial class MainViewModel : ObservableObject, IDropTarget
         {
             var vm = new FaseViewModel(fase);
             vm.PropertyChanged += (_, _) => MarkDirty();
+            vm.Tareas.CollectionChanged += (_, _) => OnPropertyChanged(nameof(TotalTareas));
             Fases.Add(vm);
         }
     }
@@ -244,9 +273,15 @@ public partial class MainViewModel : ObservableObject, IDropTarget
     partial void OnSelectedTareaChanged(TareaViewModel? oldValue, TareaViewModel? newValue)
     {
         if (oldValue is not null)
+        {
             oldValue.PropertyChanged -= OnSelectedTareaPropertyChanged;
+            oldValue.IsSelected = false;
+        }
         if (newValue is not null)
+        {
             newValue.PropertyChanged += OnSelectedTareaPropertyChanged;
+            newValue.IsSelected = true;
+        }
         OnPropertyChanged(nameof(TituloVentana));
     }
 

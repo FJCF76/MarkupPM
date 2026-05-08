@@ -5,7 +5,8 @@
     <Grid>
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="400" Margin="40">
 
-            <TextBlock Text="📋" FontSize="52" HorizontalAlignment="Center" Opacity="0.35" Margin="0,0,0,16"/>
+            <materialDesign:PackIcon Kind="ClipboardTextOutline" Width="52" Height="52"
+                                       HorizontalAlignment="Center" Opacity="0.35" Margin="0,0,0,16"/>
 
             <TextBlock Text="Bienvenido a MarkupPM"
                        FontSize="22" FontWeight="SemiBold"

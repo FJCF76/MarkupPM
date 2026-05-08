@@ -10,6 +10,7 @@
         Title="{Binding TituloVentana}"
         MinWidth="800" MinHeight="600"
         Width="1200" Height="750"
+        Icon="/Assets/app.ico"
         WindowStartupLocation="CenterScreen"
         TextElement.Foreground="{DynamicResource MaterialDesign.Brush.Foreground}"
         Background="{DynamicResource MaterialDesign.Brush.Background}"
@@ -78,26 +79,22 @@
 
                 <!-- Right side: filename + theme toggle -->
                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center">
-                    <!-- Unsaved indicator -->
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center"
-                                Visibility="{Binding IsDirty, Converter={StaticResource BoolToVis}}"
-                                Margin="0,0,12,0">
-                        <Ellipse Style="{StaticResource UnsavedDot}"/>
+                    <!-- File name with unsaved indicator -->
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,16,0">
+                        <Ellipse Style="{StaticResource UnsavedDot}"
+                                 Visibility="{Binding IsDirty, Converter={StaticResource BoolToVis}}"
+                                 Margin="0,0,6,0"/>
                         <TextBlock Text="{Binding FileNameDisplay}" FontSize="12"
                                    Foreground="White" Opacity="0.8" VerticalAlignment="Center"/>
                     </StackPanel>
-                    <TextBlock Text="{Binding FileNameDisplay}" FontSize="12"
-                               Foreground="White" Opacity="0.6" VerticalAlignment="Center"
-                               Margin="0,0,12,0"
-                               Visibility="{Binding IsDirty, Converter={StaticResource InvBoolToVis}}"/>
 
                     <!-- Theme toggle -->
                     <Button Style="{StaticResource MaterialDesignIconButton}"
                             Click="ThemeToggle_Click"
-                            Width="34" Height="34"
+                            Width="36" Height="36" Margin="0,0,4,0"
                             ToolTip="Cambiar tema claro/oscuro"
                             AutomationProperties.Name="Cambiar tema claro/oscuro">
-                        <materialDesign:PackIcon Kind="WeatherNight" Width="18" Height="18" Foreground="White"/>
+                        <materialDesign:PackIcon Kind="WeatherNight" Width="20" Height="20" Foreground="White"/>
                     </Button>
                 </StackPanel>
             </DockPanel>
@@ -114,7 +111,7 @@
             <!-- Welcome screen (no project) -->
             <views:WelcomeView Grid.Column="0" Grid.ColumnSpan="3"
                                DataContext="{Binding WelcomeVm}"
-                               Visibility="{Binding HasProyecto, Converter={StaticResource InvBoolToVis}}"/>
+                               Visibility="{Binding DataContext.HasProyecto, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource InvBoolToVis}}"/>
 
             <!-- ── SIDEBAR ── -->
             <Border Grid.Column="0"
@@ -124,20 +121,21 @@
                 <StackPanel Margin="12">
                     <TextBlock Text="PROYECTO" Style="{StaticResource StatusBarText}"
                                FontWeight="SemiBold" Margin="4,0,0,8"/>
-                    <Button Style="{StaticResource MaterialDesignFlatButton}"
-                            HorizontalContentAlignment="Left" Padding="8,6">
-                        📋 Todas las tareas
-                    </Button>
+                    <StackPanel Orientation="Horizontal" Margin="8,6">
+                        <materialDesign:PackIcon Kind="ClipboardTextOutline" Width="16" Height="16"
+                                                  VerticalAlignment="Center" Margin="0,0,6,0"
+                                                  Foreground="{DynamicResource MaterialDesign.Brush.ForegroundLight}"/>
+                        <TextBlock Text="Todas las tareas" FontSize="12" VerticalAlignment="Center"/>
+                    </StackPanel>
                     <Separator Margin="0,8"/>
                     <TextBlock Text="FASES" Style="{StaticResource StatusBarText}"
-                               FontWeight="SemiBold" Margin="4,0,0,4"/>
+                               FontWeight="SemiBold" Margin="4,0,0,8"/>
                     <ItemsControl ItemsSource="{Binding Fases}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Button Style="{StaticResource MaterialDesignFlatButton}"
-                                        HorizontalContentAlignment="Left" Padding="8,6">
-                                    <TextBlock Text="{Binding Nombre}" TextTrimming="CharacterEllipsis"/>
-                                </Button>
+                                <TextBlock Text="{Binding Nombre}" TextTrimming="CharacterEllipsis"
+                                           ToolTip="{Binding Nombre}"
+                                           Padding="8,8" FontSize="12"/>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
@@ -158,18 +156,43 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
-                <!-- Project title bar -->
+                <!-- Project title bar (double-click to rename) -->
                 <Border Grid.Row="0" Padding="16,10"
                         BorderThickness="0,0,0,1"
                         BorderBrush="{DynamicResource MaterialDesign.Brush.DataGrid.ColumnHeader.Border}">
-                    <TextBlock Text="{Binding Proyecto.Nombre}"
-                               FontSize="18" FontWeight="SemiBold"/>
+                    <Grid>
+                        <!-- Display mode -->
+                        <StackPanel Orientation="Horizontal"
+                                    Visibility="{Binding IsEditingProjectName, Converter={StaticResource InvBoolToVis}}">
+                            <TextBlock Text="{Binding Proyecto.Nombre}"
+                                       FontSize="18" FontWeight="SemiBold"
+                                       VerticalAlignment="Center" Cursor="IBeam"
+                                       ToolTip="Doble clic para renombrar">
+                                <TextBlock.InputBindings>
+                                    <MouseBinding MouseAction="LeftDoubleClick"
+                                                  Command="{Binding BeginRenamingProjectCommand}"/>
+                                </TextBlock.InputBindings>
+                            </TextBlock>
+                            <materialDesign:PackIcon Kind="PencilOutline" Width="14" Height="14"
+                                                      VerticalAlignment="Center" Margin="8,0,0,0"
+                                                      Opacity="0.3" ToolTip="Doble clic para renombrar"/>
+                        </StackPanel>
+                        <!-- Edit mode -->
+                        <TextBox Text="{Binding Proyecto.Nombre, UpdateSourceTrigger=PropertyChanged}"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                 FontSize="18" FontWeight="SemiBold"
+                                 Visibility="{Binding IsEditingProjectName, Converter={StaticResource BoolToVis}}"
+                                 x:Name="ProjectNameBox"
+                                 LostFocus="ProjectNameBox_LostFocus"
+                                 KeyDown="ProjectNameBox_KeyDown"/>
+                    </Grid>
                 </Border>
 
                 <!-- Empty phases hint -->
                 <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center"
                             Visibility="{Binding HasFases, Converter={StaticResource InvBoolToVis}}">
-                    <TextBlock Text="📂" FontSize="40" Style="{StaticResource EmptyStateIcon}"/>
+                    <materialDesign:PackIcon Kind="FolderOpenOutline" Width="48" Height="48"
+                                               HorizontalAlignment="Center" Opacity="0.3" Margin="0,0,0,12"/>
                     <TextBlock Text="Sin fases todavía" Style="{StaticResource EmptyStateTitle}"/>
                     <TextBlock Text="Las fases organizan tu proyecto en etapas."
                                Style="{StaticResource EmptyStateDescription}"/>
@@ -181,7 +204,8 @@
                 </StackPanel>
 
                 <!-- Phases list -->
-                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto"
+                              Visibility="{Binding HasFases, Converter={StaticResource BoolToVis}}">
                     <ItemsControl ItemsSource="{Binding Fases}"
                                   dd:DragDrop.IsDragSource="True"
                                   dd:DragDrop.IsDropTarget="True">
@@ -205,15 +229,21 @@
                                                        VerticalAlignment="Center"
                                                        DockPanel.Dock="Right" Margin="8,0"/>
                                             <!-- Phase name: text when not editing, TextBox when editing -->
-                                            <TextBlock Text="{Binding Nombre}"
-                                                       Style="{StaticResource PhaseHeaderText}"
-                                                       Foreground="{DynamicResource PrimaryHueMidBrush}"
-                                                       Visibility="{Binding IsEditingName, Converter={StaticResource InvBoolToVis}}"
-                                                       Cursor="IBeam">
-                                                <TextBlock.InputBindings>
-                                                    <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding BeginRenamingCommand}"/>
-                                                </TextBlock.InputBindings>
-                                            </TextBlock>
+                                            <StackPanel Orientation="Horizontal"
+                                                        Visibility="{Binding IsEditingName, Converter={StaticResource InvBoolToVis}}">
+                                                <TextBlock Text="{Binding Nombre}"
+                                                           Style="{StaticResource PhaseHeaderText}"
+                                                           Foreground="{DynamicResource PrimaryHueMidBrush}"
+                                                           ToolTip="Doble clic para renombrar"
+                                                           Cursor="IBeam">
+                                                    <TextBlock.InputBindings>
+                                                        <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding BeginRenamingCommand}"/>
+                                                    </TextBlock.InputBindings>
+                                                </TextBlock>
+                                                <materialDesign:PackIcon Kind="PencilOutline" Width="12" Height="12"
+                                                                          VerticalAlignment="Center" Margin="6,0,0,0"
+                                                                          Opacity="0.3"/>
+                                            </StackPanel>
                                             <TextBox Text="{Binding Nombre, UpdateSourceTrigger=PropertyChanged}"
                                                      Style="{StaticResource MaterialDesignOutlinedTextBox}"
                                                      FontSize="14" FontWeight="SemiBold"
@@ -250,11 +280,22 @@
                                                             </Grid.ColumnDefinitions>
                                                             <!-- Drag handle -->
                                                             <TextBlock Grid.Column="0" Text="⋮⋮"
-                                                                       FontSize="14" Opacity="0.25"
+                                                                       FontSize="14"
                                                                        HorizontalAlignment="Center"
                                                                        VerticalAlignment="Center"
                                                                        Cursor="SizeAll"
-                                                                       AutomationProperties.Name="Arrastrar tarea"/>
+                                                                       AutomationProperties.Name="Arrastrar tarea">
+                                                                <TextBlock.Style>
+                                                                    <Style TargetType="TextBlock">
+                                                                        <Setter Property="Opacity" Value="0"/>
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=Border}}" Value="True">
+                                                                                <Setter Property="Opacity" Value="0.5"/>
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </TextBlock.Style>
+                                                            </TextBlock>
                                                             <!-- Status badge -->
                                                             <Border Grid.Column="1"
                                                                     Background="{Binding Estado, Converter={StaticResource EstadoColor}}"
@@ -267,6 +308,7 @@
                                                             <!-- Task name -->
                                                             <TextBlock Grid.Column="2" Text="{Binding Nombre}"
                                                                        Style="{StaticResource TaskRowName}"
+                                                                       ToolTip="{Binding Nombre}"
                                                                        Margin="4,0"/>
                                                             <!-- Priority -->
                                                             <Border Grid.Column="3"
@@ -324,11 +366,13 @@
             <!-- ── TASK DETAIL PANEL ── -->
             <views:TaskDetailPanel Grid.Column="2"
                                    DataContext="{Binding SelectedTarea}"
-                                   Visibility="{Binding SelectedTarea, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource NotNullToVis}}"/>
+                                   Visibility="{Binding DataContext.SelectedTarea, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource NotNullToVis}}"/>
         </Grid>
 
         <!-- ══════════════════════ STATUS BAR ══════════════════════ -->
-        <StatusBar Grid.Row="2">
+        <StatusBar Grid.Row="2" Padding="8,4"
+                   BorderThickness="0,1,0,0"
+                   BorderBrush="{DynamicResource MaterialDesign.Brush.DataGrid.ColumnHeader.Border}">
             <StatusBarItem>
                 <StackPanel Orientation="Horizontal">
                     <Ellipse Style="{StaticResource UnsavedDot}"
@@ -347,6 +391,12 @@
             <StatusBarItem>
                 <TextBlock Style="{StaticResource StatusBarText}"
                            Text="{Binding FileNameDisplay}"/>
+            </StatusBarItem>
+            <Separator/>
+            <StatusBarItem>
+                <TextBlock Style="{StaticResource StatusBarText}"
+                           Text="{Binding TotalTareas, StringFormat='{}{0} tareas'}"
+                           Visibility="{Binding HasProyecto, Converter={StaticResource BoolToVis}}"/>
             </StatusBarItem>
             <StatusBarItem HorizontalAlignment="Right">
                 <TextBlock Style="{StaticResource StatusBarText}" Text="MarkupPM v1.0"/>

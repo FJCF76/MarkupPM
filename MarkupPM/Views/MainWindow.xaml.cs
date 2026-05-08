@@ -24,6 +24,29 @@ public partial class MainWindow : Window
         paletteHelper.SetTheme(theme);
     }
 
+    private void ProjectNameBox_LostFocus(object sender, RoutedEventArgs e)
+    {
+        if (sender is TextBox tb && DataContext is MainViewModel vm)
+            vm.CommitProjectRename(tb.Text);
+    }
+
+    private void ProjectNameBox_KeyDown(object sender, KeyEventArgs e)
+    {
+        if (sender is not TextBox tb || DataContext is not MainViewModel vm)
+            return;
+
+        if (e.Key is Key.Return or Key.Enter)
+        {
+            vm.CommitProjectRename(tb.Text);
+            e.Handled = true;
+        }
+        else if (e.Key == Key.Escape)
+        {
+            vm.CommitProjectRename(string.Empty);
+            e.Handled = true;
+        }
+    }
+
     private void PhaseNameBox_LostFocus(object sender, RoutedEventArgs e)
     {
         if (sender is TextBox tb && tb.DataContext is FaseViewModel faseVm)

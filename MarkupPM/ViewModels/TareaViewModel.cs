@@ -15,6 +15,7 @@ public partial class TareaViewModel : ObservableObject
     [ObservableProperty] private DateOnly? _fecha;
     [ObservableProperty] private string _notas;
     [ObservableProperty] private List<string> _dependencias;
+    [ObservableProperty] private bool _isSelected;
 
     public string Id => _model.Id;
 

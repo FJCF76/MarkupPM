@@ -61,6 +61,8 @@ Available gstack skills:
 
 ## Skill routing
 
+**BLOCKING RULE: When the user's message starts with `/skill-name`, ALWAYS invoke that skill via the Skill tool BEFORE generating any other response. Never skip the skill invocation to implement directly. This is non-negotiable.**
+
 When the user's request matches an available skill, invoke it via the Skill tool. When in doubt, invoke the skill.
 
 Key routing rules:

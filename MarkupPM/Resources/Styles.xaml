@@ -11,7 +11,7 @@
 
     <!-- Status bar + small labels -->
     <Style x:Key="StatusBarText" TargetType="TextBlock">
-        <Setter Property="FontSize"          Value="11"/>
+        <Setter Property="FontSize"          Value="12"/>
         <Setter Property="VerticalAlignment" Value="Center"/>
         <Setter Property="Foreground"        Value="{DynamicResource MaterialDesign.Brush.ForegroundLight}"/>
     </Style>
@@ -96,10 +96,14 @@
         <Setter Property="BorderBrush"     Value="{DynamicResource MaterialDesign.Brush.DataGrid.ColumnHeader.Border}"/>
         <Setter Property="Padding"         Value="0,6"/>
         <Setter Property="Cursor"          Value="Hand"/>
+        <Setter Property="Background"      Value="Transparent"/>
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Background" Value="{DynamicResource MaterialDesign.Brush.DataGrid.RowHoverBackground}"/>
             </Trigger>
+            <DataTrigger Binding="{Binding IsSelected}" Value="True">
+                <Setter Property="Background" Value="{DynamicResource PrimaryHueLightBrush}"/>
+            </DataTrigger>
         </Style.Triggers>
     </Style>
 
