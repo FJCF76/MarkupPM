@@ -12,7 +12,7 @@ env:
   PROJECT: MarkupPM/MarkupPM.csproj
   CONFIGURATION: Release
   PLATFORM: x64
-  PACKAGE_DIR: ${{ github.workspace }}\MarkupPM\AppPackages\
+  PACKAGE_DIR: ${{ github.workspace }}\artifacts\
 
 jobs:
   build-msix:
@@ -62,33 +62,46 @@ jobs:
           Export-PfxCertificate -Cert $cert -FilePath ".\DevCert.pfx" -Password $pwd
           echo "CERT_THUMBPRINT=$($cert.Thumbprint)" >> $env:GITHUB_ENV
 
-      - name: Build MSIX (sideload artifact)
+      - name: Publish app files
         run: |
-          msbuild "${{ env.PROJECT }}" `
-            /p:Configuration=${{ env.CONFIGURATION }} `
-            /p:Platform=${{ env.PLATFORM }} `
-            /p:GenerateAppxPackageOnBuild=true `
-            /p:UapAppxPackageBuildMode=SideLoadOnly `
-            /p:AppxBundle=Never `
-            /p:AppxPackageDir="${{ env.PACKAGE_DIR }}" `
-            /p:PackageCertificateThumbprint="${{ env.CERT_THUMBPRINT }}" `
-            /p:PackageCertificateKeyFile=".\DevCert.pfx" `
-            /p:PackageCertificatePassword="DevOnly" `
-            /t:Build
+          dotnet publish "${{ env.PROJECT }}" `
+            -c ${{ env.CONFIGURATION }} `
+            -r win-x64 `
+            --self-contained true `
+            -p:PublishReadyToRun=true `
+            -o "${{ env.PACKAGE_DIR }}publish"
 
-      - name: Build MSIX (Store upload)
+      - name: Build MSIX package
         run: |
-          msbuild "${{ env.PROJECT }}" `
-            /p:Configuration=${{ env.CONFIGURATION }} `
-            /p:Platform=${{ env.PLATFORM }} `
-            /p:GenerateAppxPackageOnBuild=true `
-            /p:UapAppxPackageBuildMode=StoreUpload `
-            /p:AppxBundle=Never `
-            /p:AppxPackageDir="${{ env.PACKAGE_DIR }}" `
-            /p:PackageCertificateThumbprint="${{ env.CERT_THUMBPRINT }}" `
-            /p:PackageCertificateKeyFile=".\DevCert.pfx" `
-            /p:PackageCertificatePassword="DevOnly" `
-            /t:Build
+          $layout = "${{ env.PACKAGE_DIR }}layout"
+          $publish = "${{ env.PACKAGE_DIR }}publish"
+          $manifestSource = "MarkupPM\Package.appxmanifest"
+          $manifestOut = Join-Path $layout "AppxManifest.xml"
+          $msixPath = "${{ env.PACKAGE_DIR }}MarkupPM_${{ env.VERSION3 }}_x64.msix"
+
+          New-Item -ItemType Directory -Force -Path $layout | Out-Null
+          Copy-Item "$publish\*" $layout -Recurse -Force
+
+          $assetsTarget = Join-Path $layout "Assets"
+          New-Item -ItemType Directory -Force -Path $assetsTarget | Out-Null
+          Copy-Item "MarkupPM\Assets\*" $assetsTarget -Recurse -Force
+
+          $manifest = Get-Content $manifestSource -Raw
+          $manifest = $manifest -replace 'Name="[^"]*"', 'Name="FJCF76.MarkupPM"'
+          $manifest = $manifest -replace 'Publisher="[^"]*"', 'Publisher="CN=MarkupPM-Dev"'
+          $manifest = $manifest -replace 'Executable="\$targetnametoken\$\.exe"', 'Executable="MarkupPM.exe"'
+          $manifest = $manifest -replace 'EntryPoint="\$targetentrypoint\$"', 'EntryPoint="Windows.FullTrustApplication"'
+          Set-Content -Path $manifestOut -Value $manifest -Encoding UTF8
+
+          $makeAppx = Get-ChildItem "C:\Program Files (x86)\Windows Kits\10\bin" -Recurse -Filter makeappx.exe |
+            Sort-Object FullName -Descending |
+            Select-Object -First 1 -ExpandProperty FullName
+          $signTool = Get-ChildItem "C:\Program Files (x86)\Windows Kits\10\bin" -Recurse -Filter signtool.exe |
+            Sort-Object FullName -Descending |
+            Select-Object -First 1 -ExpandProperty FullName
+
+          & $makeAppx pack /d $layout /p $msixPath /o
+          & $signTool sign /fd SHA256 /f ".\DevCert.pfx" /p "DevOnly" $msixPath
 
       - name: List packaged files
         shell: pwsh
@@ -105,16 +118,13 @@ jobs:
         with:
           name: MarkupPM-${{ github.ref_name }}
           path: |
-            ${{ env.PACKAGE_DIR }}**/*.msix
-            ${{ env.PACKAGE_DIR }}**/*.msixupload
+            ${{ env.PACKAGE_DIR }}*.msix
           retention-days: 30
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: |
-            ${{ env.PACKAGE_DIR }}**/*.msix
-            ${{ env.PACKAGE_DIR }}**/*.msixupload
+          files: ${{ env.PACKAGE_DIR }}*.msix
           body: |
             ## MarkupPM ${{ github.ref_name }}
 
