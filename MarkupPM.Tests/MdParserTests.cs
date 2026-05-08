@@ -16,6 +16,22 @@ public class MdParserTests
     }
 
     [Fact]
+    public void Parse_WithAiHeader_ProjectTitleStillExtracted()
+    {
+        var md = """
+            <!--
+            MarkupPM AI instructions:
+            - Keep format stable.
+            -->
+
+            # Mi Proyecto
+            """;
+
+        var p = _sut.Parse(md);
+        Assert.Equal("Mi Proyecto", p.Nombre);
+    }
+
+    [Fact]
     public void Parse_Phase_NameAndIdExtracted()
     {
         var md = """

@@ -23,6 +23,19 @@
         <converters:BoolToVisibilityConverter x:Key="InvBoolToVis" Invert="True"/>
         <converters:NullToVisibilityConverter x:Key="NullToVis" Invert="True"/>
         <converters:NullToVisibilityConverter x:Key="NotNullToVis"/>
+        <SolidColorBrush x:Key="ActionAccentBrush" Color="#FF7E57C2"/>
+        <Style x:Key="ToolbarActionButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignOutlinedLightButton}">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#CCFFFFFF"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.45"/>
+                    <Setter Property="BorderBrush" Value="#55FFFFFF"/>
+                    <Setter Property="Foreground" Value="#88FFFFFF"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
 
     <Window.InputBindings>
@@ -55,13 +68,13 @@
 
                 <!-- Toolbar buttons -->
                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center">
-                    <Button Style="{StaticResource MaterialDesignOutlinedLightButton}"
+                    <Button Style="{StaticResource ToolbarActionButton}"
                             Command="{Binding NuevoProyectoCommand}"
                             Margin="0,0,6,0" Height="32" Padding="10,4"
                             ToolTip="Nuevo proyecto (Ctrl+N)">
                         + Nuevo
                     </Button>
-                    <Button Style="{StaticResource MaterialDesignOutlinedLightButton}"
+                    <Button Style="{StaticResource ToolbarActionButton}"
                             Command="{Binding AbrirDialogoCommand}"
                             Margin="0,0,6,0" Height="32" Padding="10,4"
                             ToolTip="Abrir archivo (Ctrl+O)">
@@ -73,7 +86,7 @@
                     </Button>
                     <Separator Style="{StaticResource MaterialDesignLightSeparator}"
                                Width="1" Margin="4,4"/>
-                    <Button Style="{StaticResource MaterialDesignOutlinedLightButton}"
+                    <Button Style="{StaticResource ToolbarActionButton}"
                             Command="{Binding GuardarCommand}"
                             Height="32" Padding="10,4"
                             ToolTip="Guardar (Ctrl+S)">
@@ -86,15 +99,23 @@
                 </StackPanel>
 
                 <!-- Right side: filename + theme toggle -->
-                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center">
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center" Margin="12,0,0,0">
                     <!-- File name with unsaved indicator -->
-                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,16,0">
-                        <Ellipse Style="{StaticResource UnsavedDot}"
-                                 Visibility="{Binding IsDirty, Converter={StaticResource BoolToVis}}"
-                                 Margin="0,0,6,0"/>
-                        <TextBlock Text="{Binding FileNameDisplay}" FontSize="12"
-                                   Foreground="White" Opacity="0.8" VerticalAlignment="Center"/>
-                    </StackPanel>
+                    <Border VerticalAlignment="Center"
+                            Margin="0,0,16,0"
+                            Padding="10,4"
+                            CornerRadius="12"
+                            BorderThickness="1"
+                            BorderBrush="#52FFFFFF"
+                            Background="#1FFFFFFF">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Ellipse Style="{StaticResource UnsavedDot}"
+                                     Visibility="{Binding IsDirty, Converter={StaticResource BoolToVis}}"
+                                     Margin="0,0,6,0"/>
+                            <TextBlock Text="{Binding FileNameDisplay}" FontSize="12"
+                                       Foreground="White" Opacity="0.9" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
 
                     <!-- Theme toggle -->
                     <Button Style="{StaticResource MaterialDesignIconButton}"
@@ -150,7 +171,7 @@
                     <Button Style="{StaticResource MaterialDesignFlatButton}"
                             Command="{Binding AddFaseCommand}"
                             HorizontalContentAlignment="Left" Padding="8,6"
-                            Foreground="{DynamicResource PrimaryHueMidBrush}">
+                            Foreground="{DynamicResource MaterialDesign.Brush.Foreground}">
                         + Nueva fase
                     </Button>
                 </StackPanel>
@@ -181,9 +202,15 @@
                                                   Command="{Binding BeginRenamingProjectCommand}"/>
                                 </TextBlock.InputBindings>
                             </TextBlock>
-                            <materialDesign:PackIcon Kind="PencilOutline" Width="14" Height="14"
+                            <materialDesign:PackIcon Kind="PencilOutline" Width="16" Height="16"
                                                       VerticalAlignment="Center" Margin="8,0,0,0"
-                                                      Opacity="0.3" ToolTip="Doble clic para renombrar"/>
+                                                      Foreground="{DynamicResource MaterialDesign.Brush.ForegroundLight}"
+                                                      Opacity="0.45" ToolTip="Editar nombre" Cursor="Hand">
+                                <materialDesign:PackIcon.InputBindings>
+                                    <MouseBinding MouseAction="LeftClick"
+                                                  Command="{Binding BeginRenamingProjectCommand}"/>
+                                </materialDesign:PackIcon.InputBindings>
+                            </materialDesign:PackIcon>
                         </StackPanel>
                         <!-- Edit mode -->
                         <TextBox Text="{Binding Proyecto.Nombre, UpdateSourceTrigger=PropertyChanged}"
@@ -214,45 +241,78 @@
 
                 <!-- Phases list -->
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto"
+                              Focusable="False"
+                              IsTabStop="False"
+                              FocusVisualStyle="{x:Null}"
+                              KeyboardNavigation.TabNavigation="None"
                               Visibility="{Binding HasFases, Converter={StaticResource BoolToVis}}">
                     <ItemsControl ItemsSource="{Binding Fases}"
-                                  dd:DragDrop.IsDragSource="True"
-                                  dd:DragDrop.IsDropTarget="True">
+                                  Focusable="False"
+                                  IsTabStop="False"
+                                  FocusVisualStyle="{x:Null}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="{x:Type vm:FaseViewModel}">
-                                <Expander IsExpanded="{Binding IsExpanded}" Margin="0,0,0,1">
-                                    <Expander.Header>
-                                        <DockPanel Margin="4,0">
-                                            <Button DockPanel.Dock="Right"
-                                                    Style="{StaticResource MaterialDesignIconButton}"
-                                                    Command="{Binding DataContext.RemoveFaseCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                    CommandParameter="{Binding}"
-                                                    Width="26" Height="26" Padding="3" Opacity="0.5"
-                                                    ToolTip="Eliminar fase"
-                                                    AutomationProperties.Name="Eliminar fase">
-                                                <materialDesign:PackIcon Kind="Delete" Width="14" Height="14"/>
-                                            </Button>
-                                            <TextBlock Text="{Binding TaskCountLabel}"
-                                                       FontSize="11"
-                                                       Foreground="{DynamicResource MaterialDesign.Brush.ForegroundLight}"
-                                                       VerticalAlignment="Center"
-                                                       DockPanel.Dock="Right" Margin="8,0"/>
-                                            <!-- Phase name: text when not editing, TextBox when editing -->
+                                <StackPanel Margin="0,0,0,1">
+                                    <DockPanel Margin="4,0">
+                                        <Button DockPanel.Dock="Right"
+                                                Style="{StaticResource MaterialDesignIconButton}"
+                                                Command="{Binding DataContext.RemoveFaseCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                CommandParameter="{Binding}"
+                                                Width="26" Height="26" Padding="3" Opacity="0.5"
+                                                ToolTip="Eliminar fase"
+                                                AutomationProperties.Name="Eliminar fase">
+                                            <materialDesign:PackIcon Kind="Delete" Width="14" Height="14"/>
+                                        </Button>
+                                        <TextBlock Text="{Binding TaskCountLabel}"
+                                                   FontSize="11"
+                                                   Foreground="{DynamicResource MaterialDesign.Brush.ForegroundLight}"
+                                                   VerticalAlignment="Center"
+                                                   DockPanel.Dock="Right" Margin="8,0"/>
+
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <ToggleButton Style="{StaticResource MaterialDesignIconButton}"
+                                                          Width="26" Height="26" Padding="3"
+                                                          Margin="0,0,6,0"
+                                                          IsChecked="{Binding IsExpanded, Mode=TwoWay}"
+                                                          Focusable="False"
+                                                          IsTabStop="False"
+                                                          FocusVisualStyle="{x:Null}"
+                                                          ToolTip="Expandir/contraer fase"
+                                                          AutomationProperties.Name="Expandir o contraer fase">
+                                                <Grid>
+                                                    <materialDesign:PackIcon Kind="ChevronDown" Width="14" Height="14"
+                                                                              Foreground="{DynamicResource ActionAccentBrush}"
+                                                                              Visibility="{Binding IsChecked, RelativeSource={RelativeSource AncestorType=ToggleButton}, Converter={StaticResource BoolToVis}}"/>
+                                                    <materialDesign:PackIcon Kind="ChevronRight" Width="14" Height="14"
+                                                                              Foreground="{DynamicResource ActionAccentBrush}"
+                                                                              Visibility="{Binding IsChecked, RelativeSource={RelativeSource AncestorType=ToggleButton}, Converter={StaticResource InvBoolToVis}}"/>
+                                                </Grid>
+                                            </ToggleButton>
+
                                             <StackPanel Orientation="Horizontal"
                                                         Visibility="{Binding IsEditingName, Converter={StaticResource InvBoolToVis}}">
                                                 <TextBlock Text="{Binding Nombre}"
                                                            Style="{StaticResource PhaseHeaderText}"
-                                                           Foreground="{DynamicResource PrimaryHueMidBrush}"
+                                                           Foreground="{DynamicResource ActionAccentBrush}"
                                                            ToolTip="Doble clic para renombrar"
                                                            Cursor="IBeam">
                                                     <TextBlock.InputBindings>
                                                         <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding BeginRenamingCommand}"/>
                                                     </TextBlock.InputBindings>
                                                 </TextBlock>
-                                                <materialDesign:PackIcon Kind="PencilOutline" Width="12" Height="12"
-                                                                          VerticalAlignment="Center" Margin="6,0,0,0"
-                                                                          Opacity="0.3"/>
+                                                <materialDesign:PackIcon Kind="PencilOutline" Width="16" Height="16"
+                                                                          Margin="6,-3,0,0"
+                                                                          VerticalAlignment="Center"
+                                                                          Foreground="{DynamicResource MaterialDesign.Brush.ForegroundLight}"
+                                                                          Opacity="0.45"
+                                                                          ToolTip="Editar nombre de fase"
+                                                                          Cursor="Hand">
+                                                    <materialDesign:PackIcon.InputBindings>
+                                                        <MouseBinding MouseAction="LeftClick" Command="{Binding BeginRenamingCommand}"/>
+                                                    </materialDesign:PackIcon.InputBindings>
+                                                </materialDesign:PackIcon>
                                             </StackPanel>
+
                                             <TextBox Text="{Binding Nombre, UpdateSourceTrigger=PropertyChanged}"
                                                      Style="{StaticResource MaterialDesignOutlinedTextBox}"
                                                      FontSize="14" FontWeight="SemiBold"
@@ -261,11 +321,11 @@
                                                      IsVisibleChanged="RenameBox_IsVisibleChanged"
                                                      LostFocus="PhaseNameBox_LostFocus"
                                                      KeyDown="PhaseNameBox_KeyDown"/>
-                                        </DockPanel>
-                                    </Expander.Header>
+                                        </StackPanel>
+                                    </DockPanel>
 
                                     <!-- Task rows -->
-                                    <StackPanel>
+                                    <StackPanel Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVis}}">
                                         <ItemsControl ItemsSource="{Binding Tareas}"
                                                       dd:DragDrop.IsDragSource="True"
                                                       dd:DragDrop.IsDropTarget="True"
@@ -285,7 +345,7 @@
                                                                 <ColumnDefinition Width="90"/>
                                                                 <ColumnDefinition Width="*"/>
                                                                 <ColumnDefinition Width="72"/>
-                                                                <ColumnDefinition Width="34"/>
+                                                                <ColumnDefinition Width="130"/>
                                                                 <ColumnDefinition Width="72"/>
                                                             </Grid.ColumnDefinitions>
                                                             <!-- Drag handle -->
@@ -329,13 +389,27 @@
                                                                            Text="{Binding Prioridad}"/>
                                                             </Border>
                                                             <!-- Assignee initials -->
-                                                            <Border Grid.Column="4"
-                                                                    Style="{StaticResource AvatarCircle}">
-                                                                <TextBlock Text="{Binding Iniciales}"
-                                                                           FontSize="9" FontWeight="Bold"
-                                                                           HorizontalAlignment="Center"
-                                                                           VerticalAlignment="Center"/>
-                                                            </Border>
+                                                            <StackPanel Grid.Column="4"
+                                                                        Orientation="Horizontal"
+                                                                        VerticalAlignment="Center"
+                                                                        Margin="4,0">
+                                                                <Border Style="{StaticResource AvatarCircle}"
+                                                                        Background="#FF1F1F1F"
+                                                                        BorderBrush="#66FFFFFF"
+                                                                        BorderThickness="1">
+                                                                    <TextBlock Text="{Binding Iniciales}"
+                                                                               FontSize="9" FontWeight="Bold"
+                                                                               Foreground="#FFFFFFFF"
+                                                                               HorizontalAlignment="Center"
+                                                                               VerticalAlignment="Center"/>
+                                                                </Border>
+                                                                <TextBlock Text="{Binding Responsable, TargetNullValue=—}"
+                                                                           Margin="6,0,0,0"
+                                                                           VerticalAlignment="Center"
+                                                                           FontSize="11"
+                                                                           TextTrimming="CharacterEllipsis"
+                                                                           Foreground="{DynamicResource MaterialDesign.Brush.ForegroundLight}"/>
+                                                            </StackPanel>
                                                             <!-- Due date -->
                                                             <TextBlock Grid.Column="5"
                                                                        Text="{Binding FechaDisplay}"
@@ -362,11 +436,12 @@
                                                 Command="{Binding DataContext.AddTareaToFaseCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                 CommandParameter="{Binding}"
                                                 HorizontalAlignment="Left" Padding="28,4"
-                                                Opacity="0.5" FontSize="12">
+                                                Opacity="0.7" FontSize="12"
+                                                Foreground="{DynamicResource ActionAccentBrush}">
                                             + Añadir tarea
                                         </Button>
                                     </StackPanel>
-                                </Expander>
+                                </StackPanel>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>

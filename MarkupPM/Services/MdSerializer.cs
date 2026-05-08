@@ -22,9 +22,29 @@ public class MdSerializer : IMdSerializer
     private static readonly string[] EstadoToken = ["[ ]", "[~]", "[x]"];
     private static readonly string[] PrioridadToken = ["baja", "media", "alta"];
 
+    private static readonly string[] AiHeaderLines =
+    [
+        "<!--",
+        "MarkupPM AI instructions:",
+        "- This is a MarkupPM project file.",
+        "- Keep project title line as: # {ProjectName}",
+        "- Keep phase headers as: ## {PhaseName}",
+        "- Keep phase id comments: <!-- phase-id: {id} -->",
+        "- Task line format:",
+        "  - [ ] {TaskName}  <!-- id:{id} prio:{baja|media|alta} resp:{Name_With_Underscores} fecha:{yyyy-MM-dd|empty} dep:{id1,id2|empty} -->",
+        "- Task notes must be indented with two spaces under the task line.",
+        "- Preserve task ids and dependency ids when editing.",
+        "-->"
+    ];
+
     public string Serialize(Proyecto proyecto)
     {
         var sb = new StringBuilder();
+
+        foreach (var headerLine in AiHeaderLines)
+            sb.AppendLine(headerLine);
+
+        sb.AppendLine();
         sb.AppendLine($"# {EscapeInline(proyecto.Nombre)}");
 
         foreach (var fase in proyecto.Fases)

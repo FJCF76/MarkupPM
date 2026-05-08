@@ -13,7 +13,8 @@ public class MdSerializerTests
     {
         var p = new Proyecto { Nombre = "Mi Proyecto" };
         var md = _sut.Serialize(p);
-        Assert.StartsWith("# Mi Proyecto", md);
+        Assert.Contains("MarkupPM AI instructions:", md);
+        Assert.Contains("# Mi Proyecto", md);
         Assert.DoesNotContain("##", md);
     }
 

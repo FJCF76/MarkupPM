@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.Input;
 using GongSolutions.Wpf.DragDrop;
 using MarkupPM.Models;
 using MarkupPM.Services;
+using MarkupPM.Views;
 using Microsoft.Win32;
 
 namespace MarkupPM.ViewModels;
@@ -149,6 +150,18 @@ public partial class MainViewModel : ObservableObject, IDropTarget
     [RelayCommand]
     public void RemoveFase(FaseViewModel faseVm)
     {
+        var owner = Application.Current?.Windows
+            .OfType<Window>()
+            .FirstOrDefault(w => w.IsActive) ?? Application.Current?.MainWindow;
+
+        var dialog = new PhaseDeleteDialog(faseVm.Nombre, faseVm.Tareas.Count);
+        if (owner is not null)
+            dialog.Owner = owner;
+
+        var confirmed = dialog.ShowDialog() == true;
+        if (!confirmed)
+            return;
+
         Proyecto?.Fases.Remove(faseVm.Model);
         UnsubscribeFase(faseVm);
         Fases.Remove(faseVm);
@@ -195,6 +208,7 @@ public partial class MainViewModel : ObservableObject, IDropTarget
         else
         {
             Proyecto.Nombre = newName.Trim();
+            OnPropertyChanged(nameof(Proyecto));
             MarkDirty();
         }
         IsEditingProjectName = false;
@@ -217,13 +231,17 @@ public partial class MainViewModel : ObservableObject, IDropTarget
         var fase = Fases.FirstOrDefault(f => f.Tareas.Contains(SelectedTarea));
         if (fase is null) return;
 
-        var result = MessageBox.Show(
-            $"¿Eliminar la tarea \"{SelectedTarea.Nombre}\"?",
-            "Confirmar eliminación",
-            MessageBoxButton.YesNo,
-            MessageBoxImage.Warning);
+        var owner = Application.Current?.Windows
+            .OfType<Window>()
+            .FirstOrDefault(w => w.IsActive) ?? Application.Current?.MainWindow;
 
-        if (result == MessageBoxResult.Yes)
+        var dialog = new DeleteTaskDialog(SelectedTarea.Nombre);
+        if (owner is not null)
+            dialog.Owner = owner;
+
+        var result = dialog.ShowDialog() == true;
+
+        if (result)
         {
             fase.RemoveTarea(SelectedTarea);
             SelectedTarea = null;
@@ -240,12 +258,30 @@ public partial class MainViewModel : ObservableObject, IDropTarget
     public bool ConfirmarDescartarCambios()
     {
         if (!IsDirty) return true;
-        var r = MessageBox.Show(
-            "Hay cambios sin guardar. ¿Descartar y continuar?",
-            "Cambios sin guardar",
-            MessageBoxButton.YesNo,
-            MessageBoxImage.Question);
-        return r == MessageBoxResult.Yes;
+
+        var owner = Application.Current?.Windows
+            .OfType<Window>()
+            .FirstOrDefault(w => w.IsActive) ?? Application.Current?.MainWindow;
+
+        var dialog = new DiscardChangesDialog();
+        if (owner is not null)
+            dialog.Owner = owner;
+
+        if (dialog.ShowDialog() != true)
+            return false;
+
+        return dialog.Choice switch
+        {
+            UnsavedChangesDialogChoice.Save => SaveBeforeContinuing(),
+            UnsavedChangesDialogChoice.ExitWithoutSaving => true,
+            _ => false
+        };
+    }
+
+    private bool SaveBeforeContinuing()
+    {
+        Guardar();
+        return !IsDirty;
     }
 
     private void RebuildFases()
