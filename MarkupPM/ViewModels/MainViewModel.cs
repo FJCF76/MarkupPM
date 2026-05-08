@@ -141,8 +141,7 @@ public partial class MainViewModel : ObservableObject, IDropTarget
         var fase = new Fase { Nombre = "Nueva fase" };
         Proyecto.Fases.Add(fase);
         var vm = new FaseViewModel(fase);
-        vm.PropertyChanged += (_, _) => MarkDirty();
-        vm.Tareas.CollectionChanged += (_, _) => OnPropertyChanged(nameof(TotalTareas));
+        SubscribeFase(vm);
         Fases.Add(vm);
         MarkDirty();
     }
@@ -151,11 +150,27 @@ public partial class MainViewModel : ObservableObject, IDropTarget
     public void RemoveFase(FaseViewModel faseVm)
     {
         Proyecto?.Fases.Remove(faseVm.Model);
+        UnsubscribeFase(faseVm);
         Fases.Remove(faseVm);
         if (SelectedTarea is not null && faseVm.Tareas.Contains(SelectedTarea))
             SelectedTarea = null;
         MarkDirty();
     }
+
+    private void SubscribeFase(FaseViewModel vm)
+    {
+        vm.PropertyChanged += FaseVm_PropertyChanged;
+        vm.Tareas.CollectionChanged += FaseTareas_CollectionChanged;
+    }
+
+    private void UnsubscribeFase(FaseViewModel vm)
+    {
+        vm.PropertyChanged -= FaseVm_PropertyChanged;
+        vm.Tareas.CollectionChanged -= FaseTareas_CollectionChanged;
+    }
+
+    private void FaseVm_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e) => MarkDirty();
+    private void FaseTareas_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e) => OnPropertyChanged(nameof(TotalTareas));
 
     [RelayCommand]
     public void SelectTarea(TareaViewModel? tarea) => SelectedTarea = tarea;
@@ -235,12 +250,13 @@ public partial class MainViewModel : ObservableObject, IDropTarget
 
     private void RebuildFases()
     {
+        foreach (var existing in Fases)
+            UnsubscribeFase(existing);
         Fases.Clear();
         foreach (var fase in Proyecto?.Fases ?? [])
         {
             var vm = new FaseViewModel(fase);
-            vm.PropertyChanged += (_, _) => MarkDirty();
-            vm.Tareas.CollectionChanged += (_, _) => OnPropertyChanged(nameof(TotalTareas));
+            SubscribeFase(vm);
             Fases.Add(vm);
         }
     }
