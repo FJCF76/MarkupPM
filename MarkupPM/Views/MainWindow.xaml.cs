@@ -13,6 +13,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         DataContext = new MainViewModel(new MdParser(), new MdSerializer(), App.RecentFiles);
+        Loaded += (_, _) => App.OpenPendingFile();
     }
 
     private void ThemeToggle_Click(object sender, RoutedEventArgs e)
