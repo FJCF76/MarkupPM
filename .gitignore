@@ -1,8 +1,8 @@
-# Claude Code local config (personal settings, hooks, memory)
-.claude/
+# Configuración local de asistente (personal settings, hooks, memory)
+.*laude/
 
 # Archivos internos / operativos (no publicar en GitHub)
-CLAUDE.md
+*AUDE.md
 TODOS.md
 .gstack/
 
