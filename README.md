@@ -1,25 +1,39 @@
 # MarkupPM
 
-> Planifica con la potencia de una app de escritorio y la simplicidad de `Markdown`.
+> Tu proyecto, en Markdown. Listo para ti y para la IA.
 
-MarkupPM es una aplicación de escritorio en `WPF` que te ayuda a organizar proyectos por fases y tareas con una experiencia visual fluida, guardando toda la información en archivos `*.md` legibles por humanos e IA.
+¿Cansado de herramientas de gestión de proyectos que encierran tus datos en formatos propietarios? **MarkupPM** te devuelve el control: planifica, organiza y avanza con una app de escritorio fluida y moderna, mientras tus proyectos viven en archivos `*.md` que puedes leer, compartir y procesar con cualquier herramienta, incluida la IA.
 
 ## ¿Por qué MarkupPM?
 
-- **Productividad inmediata**: crea y reorganiza tareas en segundos.
-- **Formato abierto**: tus datos viven en `Markdown`, sin bloqueo de plataforma.
-- **Trabajo claro y trazable**: estructura por fases para tener siempre visibilidad.
-- **UX moderna**: interfaz limpia con `Material Design` y arrastrar/soltar.
+- 🚀 **Muévete rápido**: crea fases, añade tareas y reorganiza tu proyecto en segundos con una interfaz diseñada para no interrumpir tu flujo.
+- 📂 **Tus datos, siempre tuyos**: toda la información se guarda en `Markdown` plano. Sin bases de datos ocultas, sin suscripciones, sin bloqueo de plataforma.
+- 🤖 **Hecho para trabajar con IA**: el formato `*.md` es el lenguaje nativo de los modelos de IA. Comparte tu plan con cualquier asistente y obtén análisis, sugerencias o actualizaciones al instante.
+- 🎨 **UX que da gusto usar**: `Material Design`, arrastrar y soltar, panel de detalle y confirmaciones inteligentes para que nada se pierda por error.
+
+## MarkupPM + IA: el diferenciador que importa
+
+La mayoría de herramientas de gestión de proyectos son cajas negras para la IA. **MarkupPM no.**
+
+Porque tus proyectos son archivos `*.md`, cualquier modelo de lenguaje puede leerlos, analizarlos y ayudarte a evolucionarlos sin fricciones. Pregúntale a tu IA favorita por el estado de tu proyecto, pídele que proponga nuevas tareas o que detecte cuellos de botella, y copia el resultado de vuelta a tu archivo. Así de simple.
+
+**MarkupPM convierte a la IA en tu jefe de proyecto.**
 
 ## Características principales
 
+### ⚡ Diseñado para moverse rápido
 - Gestión de proyectos por fases.
 - Alta, edición y eliminación de tareas.
-- Panel de detalle de tarea.
-- Guardado y carga en formato `*.md`.
 - Arrastrar y soltar tareas entre fases.
-- Soporte de tema visual con `Material Design`.
 - Indicador de cambios sin guardar.
+
+### 📁 Tus datos, siempre abiertos
+- Guardado y carga en formato `*.md`.
+- Sin formatos propietarios ni dependencias de plataforma.
+
+### ✨ Una experiencia que cuida los detalles
+- Panel de detalle de tarea.
+- Interfaz con `Material Design`.
 - Diálogos de confirmación para acciones destructivas.
 
 ## Stack tecnológico
@@ -69,4 +83,8 @@ Este proyecto está licenciado bajo **MIT License**.
 
 Puedes usar, modificar y distribuir MarkupPM libremente bajo los términos de la licencia MIT.
 
-Si buscas una herramienta ligera para planificar proyectos con datos portables y legibles, **MarkupPM está hecho para ti**.
+---
+
+Si buscas una herramienta ligera, moderna y preparada para la era de la IA, deja de buscar. **MarkupPM está hecho para ti.**
+
+→ [Descarga la última versión](https://github.com/FJCF76/MarkupPM/releases) y empieza a planificar hoy.
