@@ -59,7 +59,7 @@ Consulta versiones y novedades en la sección de releases del repositorio:
 
 - `https://github.com/FJCF76/MarkupPM/releases`
 
-El pipeline de release se dispara con tags en formato `v*.*.*` (ejemplo: `v0.1.1`).
+El pipeline de release se dispara con tags en formato `v*.*.*`.
 
 ## Licencia
 
@@ -68,9 +68,5 @@ Este proyecto está licenciado bajo **MIT License**.
 - Ver archivo: `LICENSE`
 
 Puedes usar, modificar y distribuir MarkupPM libremente bajo los términos de la licencia MIT.
-
-## Estado
-
-Versión inicial pública: `0.1.x`.
 
 Si buscas una herramienta ligera para planificar proyectos con datos portables y legibles, **MarkupPM está hecho para ti**.

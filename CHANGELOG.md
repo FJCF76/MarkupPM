@@ -2,6 +2,16 @@
 
 Todos los cambios relevantes del proyecto se documentan en este archivo.
 
+## [0.1.1] - 2026-05-08
+
+### Cambiado
+
+- Actualización de documentación y metadatos del repositorio.
+
+### Notas
+
+- Release de mantenimiento.
+
 ## [0.1.0] - 2026-05-08
 
 ### Añadido
