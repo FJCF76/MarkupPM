@@ -1,12 +1,17 @@
 # MarkupPM
 
-MarkupPM es una aplicación de escritorio en `WPF` para planificar proyectos por fases y tareas usando un archivo `Markdown` como formato de almacenamiento.
+> Planifica con la potencia de una app de escritorio y la simplicidad de `Markdown`.
 
-## Estado del proyecto
+MarkupPM es una aplicación de escritorio en `WPF` que te ayuda a organizar proyectos por fases y tareas con una experiencia visual fluida, guardando toda la información en archivos `*.md` legibles por humanos e IA.
 
-Versión inicial: `0.1.0`.
+## ¿Por qué MarkupPM?
 
-## Características
+- **Productividad inmediata**: crea y reorganiza tareas en segundos.
+- **Formato abierto**: tus datos viven en `Markdown`, sin bloqueo de plataforma.
+- **Trabajo claro y trazable**: estructura por fases para tener siempre visibilidad.
+- **UX moderna**: interfaz limpia con `Material Design` y arrastrar/soltar.
+
+## Características principales
 
 - Gestión de proyectos por fases.
 - Alta, edición y eliminación de tareas.
@@ -17,41 +22,55 @@ Versión inicial: `0.1.0`.
 - Indicador de cambios sin guardar.
 - Diálogos de confirmación para acciones destructivas.
 
-## Tecnologías
+## Stack tecnológico
 
 - `.NET 8`
 - `WPF`
 - `CommunityToolkit.Mvvm`
 - `MaterialDesignThemes`
 - `gong-wpf-dragdrop`
-- `xUnit` para pruebas
+- `xUnit`
 
 ## Requisitos
 
 - `Windows 10/11`
 - `SDK de .NET 8`
-- `Visual Studio 2022` (recomendado, con carga de trabajo de escritorio .NET)
+- `Visual Studio 2022` (recomendado)
 
-## Ejecución local
+## Inicio rápido
 
 1. Restaurar dependencias:
    - `dotnet restore`
 2. Compilar:
    - `dotnet build`
-3. Ejecutar tests:
+3. Ejecutar pruebas:
    - `dotnet test`
 
-## Estructura principal
+## Estructura del repositorio
 
-- `MarkupPM/`: aplicación WPF.
+- `MarkupPM/`: aplicación principal `WPF`.
 - `MarkupPM.Tests/`: pruebas unitarias y de regresión.
-- `.github/workflows/`: CI/CD y empaquetado de release.
+- `.github/workflows/`: automatización CI/CD y release.
 - `docs/`: documentación auxiliar.
 
 ## Releases
 
-El pipeline de release se dispara con tags en formato `v*.*.*` (por ejemplo `v0.1.0`).
+Consulta versiones y novedades en la sección de releases del repositorio:
+
+- `https://github.com/FJCF76/MarkupPM/releases`
+
+El pipeline de release se dispara con tags en formato `v*.*.*` (ejemplo: `v0.1.1`).
 
 ## Licencia
 
-Pendiente de definir.
+Este proyecto está licenciado bajo **MIT License**.
+
+- Ver archivo: `LICENSE`
+
+Puedes usar, modificar y distribuir MarkupPM libremente bajo los términos de la licencia MIT.
+
+## Estado
+
+Versión inicial pública: `0.1.x`.
+
+Si buscas una herramienta ligera para planificar proyectos con datos portables y legibles, **MarkupPM está hecho para ti**.
