@@ -43,8 +43,13 @@ jobs:
       - name: Update manifest version
         run: |
           $manifest = "MarkupPM\Package.appxmanifest"
-          (Get-Content $manifest) -replace 'Version="[^"]*"', "Version=`"${{ env.VERSION4 }}`"" |
-            Set-Content $manifest
+          (Get-Content $manifest) | ForEach-Object {
+            if ($_ -match '<Identity\s') {
+              $_ -replace 'Version="[^"]*"', "Version=`"${{ env.VERSION4 }}`""
+            } else {
+              $_
+            }
+          } | Set-Content $manifest
 
       - name: Update csproj version
         run: |
