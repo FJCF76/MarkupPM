@@ -297,12 +297,13 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="{x:Type vm:FaseViewModel}">
                                 <StackPanel Margin="0,0,0,1">
-                                    <DockPanel Margin="4,0">
+                                    <DockPanel Margin="4,4,4,4">
                                         <Button DockPanel.Dock="Right"
                                                 Style="{StaticResource MaterialDesignIconButton}"
                                                 Command="{Binding DataContext.RemoveFaseCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                                 CommandParameter="{Binding}"
                                                 Width="26" Height="26" Padding="3" Opacity="0.5"
+                                                VerticalAlignment="Top"
                                                 ToolTip="Eliminar fase"
                                                 AutomationProperties.Name="Eliminar fase">
                                             <materialDesign:PackIcon Kind="Delete" Width="14" Height="14"/>
@@ -310,10 +311,11 @@
                                         <TextBlock Text="{Binding TaskCountLabel}"
                                                    FontSize="11"
                                                    Foreground="{DynamicResource TextMutedBrush}"
-                                                   VerticalAlignment="Center"
-                                                   DockPanel.Dock="Right" Margin="8,0"/>
+                                                   VerticalAlignment="Top"
+                                                   Margin="8,3"
+                                                   DockPanel.Dock="Right"/>
 
-                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
                                             <ToggleButton Style="{StaticResource MaterialDesignIconButton}"
                                                           Width="26" Height="26" Padding="3"
                                                           Margin="0,0,6,0"
@@ -333,9 +335,13 @@
                                                 </Grid>
                                             </ToggleButton>
 
-                                            <StackPanel Orientation="Horizontal"
-                                                        Visibility="{Binding IsEditingName, Converter={StaticResource InvBoolToVis}}">
-                                                <TextBlock Text="{Binding Nombre}"
+                                            <Grid Visibility="{Binding IsEditingName, Converter={StaticResource InvBoolToVis}}">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Grid.Column="0"
+                                                           Text="{Binding Nombre}"
                                                            Style="{StaticResource PhaseHeaderText}"
                                                            Foreground="{DynamicResource AccentBrush}"
                                                            ToolTip="Doble clic para renombrar"
@@ -344,9 +350,10 @@
                                                         <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding BeginRenamingCommand}"/>
                                                     </TextBlock.InputBindings>
                                                 </TextBlock>
-                                                <materialDesign:PackIcon Kind="PencilOutline" Width="16" Height="16"
-                                                                          Margin="6,-3,0,0"
-                                                                          VerticalAlignment="Center"
+                                                <materialDesign:PackIcon Grid.Column="1"
+                                                                          Kind="PencilOutline" Width="16" Height="16"
+                                                                          Margin="6,2,0,0"
+                                                                          VerticalAlignment="Top"
                                                                           Foreground="{DynamicResource TextMutedBrush}"
                                                                           Opacity="0.6"
                                                                           ToolTip="Editar nombre de fase"
@@ -355,7 +362,7 @@
                                                         <MouseBinding MouseAction="LeftClick" Command="{Binding BeginRenamingCommand}"/>
                                                     </materialDesign:PackIcon.InputBindings>
                                                 </materialDesign:PackIcon>
-                                            </StackPanel>
+                                            </Grid>
 
                                             <TextBox Text="{Binding Nombre, UpdateSourceTrigger=PropertyChanged}"
                                                      Style="{StaticResource MaterialDesignOutlinedTextBox}"
@@ -396,7 +403,8 @@
                                                             <TextBlock Grid.Column="0" Text="⋮⋮"
                                                                        FontSize="14"
                                                                        HorizontalAlignment="Center"
-                                                                       VerticalAlignment="Center"
+                                                                       VerticalAlignment="Top"
+                                                                       Margin="0,4,0,0"
                                                                        Cursor="SizeAll"
                                                                        AutomationProperties.Name="Arrastrar tarea">
                                                                 <TextBlock.Style>
@@ -414,21 +422,21 @@
                                                             <Border Grid.Column="1"
                                                                     Background="{Binding Estado, Converter={StaticResource EstadoColorBg}}"
                                                                     CornerRadius="10" Padding="8,3"
-                                                                    HorizontalAlignment="Left" VerticalAlignment="Center"
-                                                                    Margin="4,0">
+                                                                    HorizontalAlignment="Left" VerticalAlignment="Top"
+                                                                    Margin="4,2">
                                                                 <TextBlock Text="{Binding Estado}" FontSize="10" FontWeight="SemiBold"
                                                                            Foreground="{Binding Estado, Converter={StaticResource EstadoColorFg}}"/>
                                                             </Border>
                                                             <!-- Task name -->
                                                             <TextBlock Grid.Column="2" Text="{Binding Nombre}"
                                                                        Style="{StaticResource TaskRowName}"
-                                                                       ToolTip="{Binding Nombre}"
                                                                        Margin="4,0"/>
                                                             <!-- Priority chip -->
                                                             <Border Grid.Column="3"
                                                                     Background="{Binding Prioridad, Converter={StaticResource PrioridadColorBg}}"
                                                                     CornerRadius="10" Padding="8,3"
-                                                                    HorizontalAlignment="Left" VerticalAlignment="Center">
+                                                                    HorizontalAlignment="Left" VerticalAlignment="Top"
+                                                                    Margin="0,2">
                                                                 <TextBlock FontSize="10" FontWeight="SemiBold"
                                                                            Foreground="{Binding Prioridad, Converter={StaticResource PrioridadColorFg}}"
                                                                            Text="{Binding Prioridad}"/>
@@ -436,8 +444,8 @@
                                                             <!-- Assignee initials -->
                                                             <StackPanel Grid.Column="4"
                                                                         Orientation="Horizontal"
-                                                                        VerticalAlignment="Center"
-                                                                        Margin="4,0">
+                                                                        VerticalAlignment="Top"
+                                                                        Margin="4,1">
                                                                 <Border Style="{StaticResource AvatarCircle}">
                                                                     <TextBlock Text="{Binding Iniciales}"
                                                                                Style="{StaticResource AvatarText}"/>
@@ -446,13 +454,15 @@
                                                                            Margin="6,0,0,0"
                                                                            VerticalAlignment="Center"
                                                                            FontSize="11"
+                                                                           TextWrapping="NoWrap"
                                                                            TextTrimming="CharacterEllipsis"
                                                                            Foreground="{DynamicResource TextSecondaryBrush}"/>
                                                             </StackPanel>
                                                             <!-- Due date -->
                                                             <TextBlock Grid.Column="5"
                                                                        Text="{Binding FechaDisplay}"
-                                                                       FontSize="11" VerticalAlignment="Center"
+                                                                       FontSize="11" VerticalAlignment="Top"
+                                                                       Margin="0,3"
                                                                        HorizontalAlignment="Center">
                                                                 <TextBlock.Style>
                                                                     <Style TargetType="TextBlock" BasedOn="{StaticResource MutedText}">
