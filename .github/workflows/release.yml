@@ -69,6 +69,8 @@ jobs:
             -r win-x64 `
             --self-contained true `
             -p:PublishReadyToRun=true `
+            -p:WindowsPackageType=None `
+            -p:AppxPackageSigningEnabled=false `
             -o "${{ env.PACKAGE_DIR }}publish"
 
       - name: Build MSIX package
@@ -81,6 +83,9 @@ jobs:
 
           New-Item -ItemType Directory -Force -Path $layout | Out-Null
           Copy-Item "$publish\*" $layout -Recurse -Force
+
+          # Remove any AppxManifest.xml the SDK may have generated with wrong MinVersion
+          Get-ChildItem $layout -Recurse -Filter "AppxManifest.xml" | Remove-Item -Force
 
           $assetsTarget = Join-Path $layout "Assets"
           New-Item -ItemType Directory -Force -Path $assetsTarget | Out-Null
