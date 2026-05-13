@@ -14,6 +14,8 @@ public partial class WelcomeViewModel : ObservableObject
 
     public ObservableCollection<string> Recientes { get; } = [];
 
+    public bool HasRecientes => Recientes.Count > 0;
+
     public WelcomeViewModel(IRecentFilesService recentFiles)
     {
         _recentFiles = recentFiles;
@@ -25,6 +27,7 @@ public partial class WelcomeViewModel : ObservableObject
         Recientes.Clear();
         foreach (var f in _recentFiles.GetRecent())
             Recientes.Add(f);
+        OnPropertyChanged(nameof(HasRecientes));
     }
 
     [RelayCommand]

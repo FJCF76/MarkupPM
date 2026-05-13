@@ -60,6 +60,9 @@ public class QaRegressionTests
         // Save state: reset dirty flag
         vm.IsDirty = false;
 
+        // Stub out the WPF dialog so the test runs on any thread
+        vm.ConfirmDeleteFase = (_, _) => true;
+
         // Remove the fase
         vm.RemoveFase(fase);
         vm.IsDirty = false; // reset again after removal
@@ -82,6 +85,7 @@ public class QaRegressionTests
         var removedFase = vm.Fases[0];
         vm.Fases[1].AddTarea("Keep");
 
+        vm.ConfirmDeleteFase = (_, _) => true;
         vm.RemoveFase(removedFase);
         Assert.Equal(1, vm.TotalTareas);
 

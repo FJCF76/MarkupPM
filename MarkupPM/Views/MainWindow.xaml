@@ -17,25 +17,17 @@
         TextElement.FontFamily="{materialDesign:MaterialDesignFont}"
         FontSize="13">
     <Window.Resources>
+        <converters:EstadoToColorConverter x:Key="EstadoColorBg"/>
+        <converters:EstadoToColorConverter x:Key="EstadoColorFg" Foreground="True"/>
+        <converters:PrioridadToColorConverter x:Key="PrioridadColorBg"/>
+        <converters:PrioridadToColorConverter x:Key="PrioridadColorFg" Foreground="True"/>
+        <!-- Keep old keys for any remaining references -->
         <converters:EstadoToColorConverter x:Key="EstadoColor"/>
         <converters:PrioridadToColorConverter x:Key="PrioridadColor"/>
         <converters:BoolToVisibilityConverter x:Key="BoolToVis"/>
         <converters:BoolToVisibilityConverter x:Key="InvBoolToVis" Invert="True"/>
         <converters:NullToVisibilityConverter x:Key="NullToVis" Invert="True"/>
         <converters:NullToVisibilityConverter x:Key="NotNullToVis"/>
-        <SolidColorBrush x:Key="ActionAccentBrush" Color="#FF7E57C2"/>
-        <Style x:Key="ToolbarActionButton" TargetType="Button" BasedOn="{StaticResource MaterialDesignOutlinedLightButton}">
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderBrush" Value="#CCFFFFFF"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Style.Triggers>
-                <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Opacity" Value="0.45"/>
-                    <Setter Property="BorderBrush" Value="#55FFFFFF"/>
-                    <Setter Property="Foreground" Value="#88FFFFFF"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
     </Window.Resources>
 
     <Window.InputBindings>
@@ -53,81 +45,92 @@
         </Grid.RowDefinitions>
 
         <!-- ══════════════════════ TOOLBAR ══════════════════════ -->
-        <materialDesign:ColorZone Grid.Row="0" Mode="PrimaryMid" Padding="12,6">
-            <DockPanel>
+        <Border Grid.Row="0"
+                Background="{DynamicResource SurfaceToolbarBrush}"
+                BorderThickness="0,0,0,1"
+                BorderBrush="{DynamicResource BorderSubtleBrush}"
+                Padding="14,0">
+            <DockPanel Height="48">
                 <!-- App logo + name -->
-                <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" Margin="0,0,16,0">
-                    <Border Width="26" Height="26" Background="{DynamicResource PrimaryHueMidBrush}" CornerRadius="4"
-                            Margin="0,0,8,0">
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" Margin="0,0,20,0" VerticalAlignment="Center">
+                    <Border Width="28" Height="28"
+                            Background="{DynamicResource AccentBrush}"
+                            CornerRadius="7"
+                            Margin="0,0,9,0">
                         <TextBlock Text="MP" FontSize="11" FontWeight="Bold"
                                    Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <TextBlock Text="MarkupPM" FontSize="14" FontWeight="SemiBold"
-                               VerticalAlignment="Center" Foreground="White"/>
+                               VerticalAlignment="Center"
+                               Foreground="{DynamicResource TextPrimaryBrush}"/>
                 </StackPanel>
 
-                <!-- Toolbar buttons -->
+                <!-- Toolbar action buttons -->
                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center">
                     <Button Style="{StaticResource ToolbarActionButton}"
                             Command="{Binding NuevoProyectoCommand}"
-                            Margin="0,0,6,0" Height="32" Padding="10,4"
+                            Margin="0,0,4,0"
                             ToolTip="Nuevo proyecto (Ctrl+N)">
-                        + Nuevo
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="PlusCircleOutline" Width="15" Height="15"
+                                                      VerticalAlignment="Center" Margin="0,0,5,0"/>
+                            <TextBlock Text="Nuevo" VerticalAlignment="Center"/>
+                        </StackPanel>
                     </Button>
                     <Button Style="{StaticResource ToolbarActionButton}"
                             Command="{Binding AbrirDialogoCommand}"
-                            Margin="0,0,6,0" Height="32" Padding="10,4"
+                            Margin="0,0,4,0"
                             ToolTip="Abrir archivo (Ctrl+O)">
                         <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="FolderOpenOutline" Width="16" Height="16"
-                                                      VerticalAlignment="Center" Margin="0,0,4,0"/>
+                            <materialDesign:PackIcon Kind="FolderOpenOutline" Width="15" Height="15"
+                                                      VerticalAlignment="Center" Margin="0,0,5,0"/>
                             <TextBlock Text="Abrir" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
-                    <Separator Style="{StaticResource MaterialDesignLightSeparator}"
-                               Width="1" Margin="4,4"/>
+                    <Rectangle Width="1" Fill="{DynamicResource BorderSubtleBrush}" Margin="4,10" VerticalAlignment="Stretch"/>
                     <Button Style="{StaticResource ToolbarActionButton}"
                             Command="{Binding GuardarCommand}"
-                            Height="32" Padding="10,4"
                             ToolTip="Guardar (Ctrl+S)">
                         <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="ContentSaveOutline" Width="16" Height="16"
-                                                      VerticalAlignment="Center" Margin="0,0,4,0"/>
+                            <materialDesign:PackIcon Kind="ContentSaveOutline" Width="15" Height="15"
+                                                      VerticalAlignment="Center" Margin="0,0,5,0"/>
                             <TextBlock Text="Guardar" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
                 </StackPanel>
 
                 <!-- Right side: filename + theme toggle -->
-                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center" Margin="12,0,0,0">
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" VerticalAlignment="Center">
                     <!-- File name with unsaved indicator -->
                     <Border VerticalAlignment="Center"
-                            Margin="0,0,16,0"
+                            Margin="0,0,6,0"
                             Padding="10,4"
                             CornerRadius="12"
                             BorderThickness="1"
-                            BorderBrush="#52FFFFFF"
-                            Background="#1FFFFFFF">
+                            BorderBrush="{DynamicResource BorderSubtleBrush}"
+                            Background="{DynamicResource MaterialDesign.Brush.Background}">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <Ellipse Style="{StaticResource UnsavedDot}"
                                      Visibility="{Binding IsDirty, Converter={StaticResource BoolToVis}}"
                                      Margin="0,0,6,0"/>
-                            <TextBlock Text="{Binding FileNameDisplay}" FontSize="12"
-                                       Foreground="White" Opacity="0.9" VerticalAlignment="Center"/>
+                            <TextBlock Text="{Binding FileNameDisplay}" FontSize="11"
+                                       Foreground="{DynamicResource TextSecondaryBrush}"
+                                       VerticalAlignment="Center"/>
                         </StackPanel>
                     </Border>
 
                     <!-- Theme toggle -->
                     <Button Style="{StaticResource MaterialDesignIconButton}"
                             Click="ThemeToggle_Click"
-                            Width="36" Height="36" Margin="0,0,4,0"
+                            Width="36" Height="36"
                             ToolTip="Cambiar tema claro/oscuro"
-                            AutomationProperties.Name="Cambiar tema claro/oscuro">
-                        <materialDesign:PackIcon Kind="WeatherNight" Width="20" Height="20" Foreground="White"/>
+                            AutomationProperties.Name="Cambiar tema claro/oscuro"
+                            Foreground="{DynamicResource TextSecondaryBrush}">
+                        <materialDesign:PackIcon Kind="WeatherNight" Width="18" Height="18"/>
                     </Button>
                 </StackPanel>
             </DockPanel>
-        </materialDesign:ColorZone>
+        </Border>
 
         <!-- ══════════════════════ MAIN AREA ══════════════════════ -->
         <Grid Grid.Row="1">
@@ -144,52 +147,60 @@
 
             <!-- ── SIDEBAR ── -->
             <Border Grid.Column="0"
+                    Background="{DynamicResource SurfaceSidebarBrush}"
                     BorderThickness="0,0,1,0"
-                    BorderBrush="{DynamicResource MaterialDesign.Brush.DataGrid.ColumnHeader.Border}"
+                    BorderBrush="{DynamicResource BorderSubtleBrush}"
                     Visibility="{Binding HasProyecto, Converter={StaticResource BoolToVis}}">
-                <StackPanel Margin="12">
-                    <TextBlock Text="PROYECTO" Style="{StaticResource StatusBarText}"
-                               FontWeight="SemiBold" Margin="4,0,0,8"/>
-                    <Button Style="{StaticResource MaterialDesignFlatButton}"
-                            Command="{Binding SelectFaseFilterCommand}"
+                <StackPanel Margin="8,12">
+                    <TextBlock Text="PROYECTO" Style="{StaticResource SectionTitle}"
+                               Margin="8,0,0,6"/>
+                    <Button Command="{Binding SelectFaseFilterCommand}"
                             CommandParameter="{x:Null}"
-                            HorizontalContentAlignment="Left" Padding="4,6"
-                            Foreground="{DynamicResource MaterialDesign.Brush.Foreground}">
-                        <Button.Resources>
+                            HorizontalContentAlignment="Left" Padding="12,7"
+                            Height="Auto">
+                        <Button.Style>
                             <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">
+                                <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                                <Setter Property="materialDesign:RippleAssist.Feedback" Value="{DynamicResource AccentLightBrush}"/>
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding SelectedFase}" Value="{x:Null}">
-                                        <Setter Property="Foreground" Value="{DynamicResource ActionAccentBrush}"/>
+                                        <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
                                         <Setter Property="FontWeight" Value="SemiBold"/>
+                                        <Setter Property="Background" Value="{DynamicResource SurfaceSelectedBrush}"/>
                                     </DataTrigger>
                                 </Style.Triggers>
                             </Style>
-                        </Button.Resources>
+                        </Button.Style>
                         <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="ViewListOutline" Width="15" Height="15"
+                                                      VerticalAlignment="Center" Margin="0,0,8,0"
+                                                      Opacity="0.7"/>
                             <TextBlock Text="Todas las tareas" FontSize="12" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
-                    <Separator Margin="0,8"/>
-                    <TextBlock Text="FASES" Style="{StaticResource StatusBarText}"
-                               FontWeight="SemiBold" Margin="4,0,0,8"/>
+                    <Rectangle Height="1" Fill="{DynamicResource BorderSubtleBrush}" Margin="8,8"/>
+                    <TextBlock Text="FASES" Style="{StaticResource SectionTitle}"
+                               Margin="8,0,0,4"/>
                     <ItemsControl ItemsSource="{Binding Fases}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Button Style="{StaticResource MaterialDesignFlatButton}"
-                                        Command="{Binding DataContext.SelectFaseFilterCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                <Button Command="{Binding DataContext.SelectFaseFilterCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                                         CommandParameter="{Binding}"
-                                        HorizontalContentAlignment="Left" Padding="8,6"
-                                        Foreground="{DynamicResource MaterialDesign.Brush.Foreground}">
-                                    <Button.Resources>
+                                        HorizontalContentAlignment="Left" Padding="12,7"
+                                        Height="Auto">
+                                    <Button.Style>
                                         <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">
+                                            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                                            <Setter Property="materialDesign:RippleAssist.Feedback" Value="{DynamicResource AccentLightBrush}"/>
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding IsFilterSelected}" Value="True">
-                                                    <Setter Property="Foreground" Value="{DynamicResource ActionAccentBrush}"/>
+                                                    <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
                                                     <Setter Property="FontWeight" Value="SemiBold"/>
+                                                    <Setter Property="Background" Value="{DynamicResource SurfaceSelectedBrush}"/>
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
-                                    </Button.Resources>
+                                    </Button.Style>
                                     <TextBlock Text="{Binding Nombre}" TextTrimming="CharacterEllipsis"
                                                ToolTip="{Binding Nombre}"
                                                FontSize="12"/>
@@ -197,11 +208,15 @@
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
-                    <Button Style="{StaticResource MaterialDesignFlatButton}"
+                    <Button Style="{StaticResource GhostButton}"
                             Command="{Binding AddFaseCommand}"
-                            HorizontalContentAlignment="Left" Padding="8,6"
-                            Foreground="{DynamicResource MaterialDesign.Brush.Foreground}">
-                        + Nueva fase
+                            HorizontalContentAlignment="Left" Padding="12,7"
+                            Height="Auto" Margin="0,2,0,0">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Plus" Width="13" Height="13"
+                                                      VerticalAlignment="Center" Margin="0,0,6,0"/>
+                            <TextBlock Text="Nueva fase" FontSize="12" VerticalAlignment="Center"/>
+                        </StackPanel>
                     </Button>
                 </StackPanel>
             </Border>
@@ -217,7 +232,7 @@
                 <!-- Project title bar (double-click to rename) -->
                 <Border Grid.Row="0" Padding="16,10"
                         BorderThickness="0,0,0,1"
-                        BorderBrush="{DynamicResource MaterialDesign.Brush.DataGrid.ColumnHeader.Border}">
+                        BorderBrush="{DynamicResource BorderSubtleBrush}">
                     <Grid>
                         <!-- Display mode -->
                         <StackPanel Orientation="Horizontal"
@@ -233,8 +248,8 @@
                             </TextBlock>
                             <materialDesign:PackIcon Kind="PencilOutline" Width="16" Height="16"
                                                       VerticalAlignment="Center" Margin="8,0,0,0"
-                                                      Foreground="{DynamicResource MaterialDesign.Brush.ForegroundLight}"
-                                                      Opacity="0.45" ToolTip="Editar nombre" Cursor="Hand">
+                                                      Foreground="{DynamicResource TextMutedBrush}"
+                                                      Opacity="0.6" ToolTip="Editar nombre" Cursor="Hand">
                                 <materialDesign:PackIcon.InputBindings>
                                     <MouseBinding MouseAction="LeftClick"
                                                   Command="{Binding BeginRenamingProjectCommand}"/>
@@ -294,7 +309,7 @@
                                         </Button>
                                         <TextBlock Text="{Binding TaskCountLabel}"
                                                    FontSize="11"
-                                                   Foreground="{DynamicResource MaterialDesign.Brush.ForegroundLight}"
+                                                   Foreground="{DynamicResource TextMutedBrush}"
                                                    VerticalAlignment="Center"
                                                    DockPanel.Dock="Right" Margin="8,0"/>
 
@@ -310,10 +325,10 @@
                                                           AutomationProperties.Name="Expandir o contraer fase">
                                                 <Grid>
                                                     <materialDesign:PackIcon Kind="ChevronDown" Width="14" Height="14"
-                                                                              Foreground="{DynamicResource ActionAccentBrush}"
+                                                                              Foreground="{DynamicResource AccentBrush}"
                                                                               Visibility="{Binding IsChecked, RelativeSource={RelativeSource AncestorType=ToggleButton}, Converter={StaticResource BoolToVis}}"/>
                                                     <materialDesign:PackIcon Kind="ChevronRight" Width="14" Height="14"
-                                                                              Foreground="{DynamicResource ActionAccentBrush}"
+                                                                              Foreground="{DynamicResource AccentBrush}"
                                                                               Visibility="{Binding IsChecked, RelativeSource={RelativeSource AncestorType=ToggleButton}, Converter={StaticResource InvBoolToVis}}"/>
                                                 </Grid>
                                             </ToggleButton>
@@ -322,7 +337,7 @@
                                                         Visibility="{Binding IsEditingName, Converter={StaticResource InvBoolToVis}}">
                                                 <TextBlock Text="{Binding Nombre}"
                                                            Style="{StaticResource PhaseHeaderText}"
-                                                           Foreground="{DynamicResource ActionAccentBrush}"
+                                                           Foreground="{DynamicResource AccentBrush}"
                                                            ToolTip="Doble clic para renombrar"
                                                            Cursor="IBeam">
                                                     <TextBlock.InputBindings>
@@ -332,8 +347,8 @@
                                                 <materialDesign:PackIcon Kind="PencilOutline" Width="16" Height="16"
                                                                           Margin="6,-3,0,0"
                                                                           VerticalAlignment="Center"
-                                                                          Foreground="{DynamicResource MaterialDesign.Brush.ForegroundLight}"
-                                                                          Opacity="0.45"
+                                                                          Foreground="{DynamicResource TextMutedBrush}"
+                                                                          Opacity="0.6"
                                                                           ToolTip="Editar nombre de fase"
                                                                           Cursor="Hand">
                                                     <materialDesign:PackIcon.InputBindings>
@@ -395,26 +410,27 @@
                                                                     </Style>
                                                                 </TextBlock.Style>
                                                             </TextBlock>
-                                                            <!-- Status badge -->
+                                                            <!-- Status chip -->
                                                             <Border Grid.Column="1"
-                                                                    Background="{Binding Estado, Converter={StaticResource EstadoColor}}"
-                                                                    CornerRadius="10" Padding="6,2"
+                                                                    Background="{Binding Estado, Converter={StaticResource EstadoColorBg}}"
+                                                                    CornerRadius="10" Padding="8,3"
                                                                     HorizontalAlignment="Left" VerticalAlignment="Center"
                                                                     Margin="4,0">
-                                                                <TextBlock Text="{Binding Estado}" FontSize="10" FontWeight="Medium"
-                                                                           Foreground="White"/>
+                                                                <TextBlock Text="{Binding Estado}" FontSize="10" FontWeight="SemiBold"
+                                                                           Foreground="{Binding Estado, Converter={StaticResource EstadoColorFg}}"/>
                                                             </Border>
                                                             <!-- Task name -->
                                                             <TextBlock Grid.Column="2" Text="{Binding Nombre}"
                                                                        Style="{StaticResource TaskRowName}"
                                                                        ToolTip="{Binding Nombre}"
                                                                        Margin="4,0"/>
-                                                            <!-- Priority -->
+                                                            <!-- Priority chip -->
                                                             <Border Grid.Column="3"
-                                                                    CornerRadius="10" Padding="6,2"
+                                                                    Background="{Binding Prioridad, Converter={StaticResource PrioridadColorBg}}"
+                                                                    CornerRadius="10" Padding="8,3"
                                                                     HorizontalAlignment="Left" VerticalAlignment="Center">
-                                                                <TextBlock FontSize="10" FontWeight="Medium"
-                                                                           Foreground="{Binding Prioridad, Converter={StaticResource PrioridadColor}}"
+                                                                <TextBlock FontSize="10" FontWeight="SemiBold"
+                                                                           Foreground="{Binding Prioridad, Converter={StaticResource PrioridadColorFg}}"
                                                                            Text="{Binding Prioridad}"/>
                                                             </Border>
                                                             <!-- Assignee initials -->
@@ -422,22 +438,16 @@
                                                                         Orientation="Horizontal"
                                                                         VerticalAlignment="Center"
                                                                         Margin="4,0">
-                                                                <Border Style="{StaticResource AvatarCircle}"
-                                                                        Background="#FF1F1F1F"
-                                                                        BorderBrush="#66FFFFFF"
-                                                                        BorderThickness="1">
+                                                                <Border Style="{StaticResource AvatarCircle}">
                                                                     <TextBlock Text="{Binding Iniciales}"
-                                                                               FontSize="9" FontWeight="Bold"
-                                                                               Foreground="#FFFFFFFF"
-                                                                               HorizontalAlignment="Center"
-                                                                               VerticalAlignment="Center"/>
+                                                                               Style="{StaticResource AvatarText}"/>
                                                                 </Border>
                                                                 <TextBlock Text="{Binding Responsable, TargetNullValue=—}"
                                                                            Margin="6,0,0,0"
                                                                            VerticalAlignment="Center"
                                                                            FontSize="11"
                                                                            TextTrimming="CharacterEllipsis"
-                                                                           Foreground="{DynamicResource MaterialDesign.Brush.ForegroundLight}"/>
+                                                                           Foreground="{DynamicResource TextSecondaryBrush}"/>
                                                             </StackPanel>
                                                             <!-- Due date -->
                                                             <TextBlock Grid.Column="5"
@@ -461,14 +471,17 @@
                                             </ItemsControl.ItemTemplate>
                                         </ItemsControl>
                                         <!-- Add task row -->
-                                        <Button Style="{StaticResource MaterialDesignFlatButton}"
-                                                Command="{Binding DataContext.AddTareaToFaseCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                                CommandParameter="{Binding}"
-                                                HorizontalAlignment="Left" Padding="28,4"
-                                                Opacity="0.7" FontSize="12"
-                                                Foreground="{DynamicResource ActionAccentBrush}">
-                                            + Añadir tarea
-                                        </Button>
+                                                        <Button Style="{StaticResource GhostButton}"
+                                                                Command="{Binding DataContext.AddTareaToFaseCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                                CommandParameter="{Binding}"
+                                                                HorizontalAlignment="Left" Padding="28,5"
+                                                                Opacity="0.85" FontSize="12">
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <materialDesign:PackIcon Kind="Plus" Width="12" Height="12"
+                                                                                          VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                                                <TextBlock Text="Añadir tarea" VerticalAlignment="Center"/>
+                                                            </StackPanel>
+                                                        </Button>
                                     </StackPanel>
                                 </StackPanel>
                             </DataTemplate>
@@ -486,7 +499,7 @@
         <!-- ══════════════════════ STATUS BAR ══════════════════════ -->
         <StatusBar Grid.Row="2" Padding="8,4"
                    BorderThickness="0,1,0,0"
-                   BorderBrush="{DynamicResource MaterialDesign.Brush.DataGrid.ColumnHeader.Border}">
+                   BorderBrush="{DynamicResource BorderSubtleBrush}">
             <StatusBarItem>
                 <StackPanel Orientation="Horizontal">
                     <Ellipse Style="{StaticResource UnsavedDot}"

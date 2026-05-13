@@ -12,7 +12,7 @@
     </UserControl.Resources>
 
     <Border BorderThickness="1,0,0,0"
-            BorderBrush="{DynamicResource MaterialDesign.Brush.DataGrid.ColumnHeader.Border}">
+            BorderBrush="{DynamicResource BorderSubtleBrush}">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -23,10 +23,12 @@
             <!-- Panel header -->
             <Border Grid.Row="0" Padding="14,10"
                     BorderThickness="0,0,0,1"
-                    BorderBrush="{DynamicResource MaterialDesign.Brush.DataGrid.ColumnHeader.Border}">
+                    BorderBrush="{DynamicResource BorderSubtleBrush}"
+                    Background="{DynamicResource SurfaceSidebarBrush}">
                 <DockPanel>
-                    <TextBlock Text="Detalle de tarea" FontSize="12"
-                               Foreground="{DynamicResource MaterialDesign.Brush.ForegroundLight}"
+                    <TextBlock Text="Detalle de tarea" FontSize="11"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextMutedBrush}"
                                VerticalAlignment="Center"/>
                     <Button DockPanel.Dock="Right"
                             Style="{StaticResource MaterialDesignIconButton}"
@@ -108,7 +110,7 @@
             <!-- Footer: delete -->
             <Border Grid.Row="2" Padding="14,10"
                     BorderThickness="0,1,0,0"
-                    BorderBrush="{DynamicResource MaterialDesign.Brush.DataGrid.ColumnHeader.Border}">
+                    BorderBrush="{DynamicResource BorderSubtleBrush}">
                 <Button Style="{StaticResource DangerButton}"
                         Command="{Binding DataContext.DeleteSelectedTareaCommand, RelativeSource={RelativeSource AncestorType=Window}}">
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">

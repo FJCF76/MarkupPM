@@ -27,6 +27,12 @@ public partial class MainViewModel : ObservableObject, IDropTarget
 
     public WelcomeViewModel WelcomeVm { get; }
 
+    /// <summary>
+    /// Delegate that confirms fase deletion. Replace in tests to avoid WPF STA requirements.
+    /// Default implementation opens <see cref="PhaseDeleteDialog"/>.
+    /// </summary>
+    public Func<string, int, bool> ConfirmDeleteFase { get; set; }
+
     public ObservableCollection<FaseViewModel> Fases { get; } = [];
 
     public IEnumerable<FaseViewModel> FilteredFases =>
@@ -49,6 +55,17 @@ public partial class MainViewModel : ObservableObject, IDropTarget
         _parser = parser;
         _serializer = serializer;
         _recentFiles = recentFiles;
+
+        ConfirmDeleteFase = (nombre, count) =>
+        {
+            var owner = Application.Current?.Windows
+                .OfType<Window>()
+                .FirstOrDefault(w => w.IsActive) ?? Application.Current?.MainWindow;
+            var dialog = new PhaseDeleteDialog(nombre, count);
+            if (owner is not null)
+                dialog.Owner = owner;
+            return dialog.ShowDialog() == true;
+        };
 
         WelcomeVm = new WelcomeViewModel(recentFiles)
         {
@@ -157,15 +174,7 @@ public partial class MainViewModel : ObservableObject, IDropTarget
     [RelayCommand]
     public void RemoveFase(FaseViewModel faseVm)
     {
-        var owner = Application.Current?.Windows
-            .OfType<Window>()
-            .FirstOrDefault(w => w.IsActive) ?? Application.Current?.MainWindow;
-
-        var dialog = new PhaseDeleteDialog(faseVm.Nombre, faseVm.Tareas.Count);
-        if (owner is not null)
-            dialog.Owner = owner;
-
-        var confirmed = dialog.ShowDialog() == true;
+        var confirmed = ConfirmDeleteFase(faseVm.Nombre, faseVm.Tareas.Count);
         if (!confirmed)
             return;
 
