@@ -128,31 +128,42 @@
         <Setter Property="Margin"     Value="0,0,0,4"/>
     </Style>
 
-    <!-- Detail panel field label — slightly larger, softer case -->
+    <!-- Detail panel field label -->
     <Style x:Key="DetailFieldLabel" TargetType="TextBlock">
-        <Setter Property="FontSize"   Value="11"/>
-        <Setter Property="FontWeight" Value="Medium"/>
+        <Setter Property="FontSize"   Value="10"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="Foreground" Value="{DynamicResource TextMutedBrush}"/>
-        <Setter Property="Margin"     Value="0,0,0,5"/>
+        <Setter Property="Margin"     Value="0,0,0,3"/>
     </Style>
 
-    <!-- Filled input surface for detail panel fields -->
+    <!-- Underline-only TextBox for detail panel (no floating hint, clean single line) -->
     <Style x:Key="DetailTextBox" TargetType="TextBox"
-           BasedOn="{StaticResource MaterialDesignFilledTextBox}">
-        <Setter Property="FontSize"          Value="13"/>
-        <Setter Property="TextWrapping"      Value="Wrap"/>
-        <Setter Property="AcceptsReturn"     Value="False"/>
+           BasedOn="{StaticResource MaterialDesignTextBox}">
+        <Setter Property="FontSize"      Value="13"/>
+        <Setter Property="TextWrapping"  Value="NoWrap"/>
+        <Setter Property="AcceptsReturn" Value="False"/>
+        <Setter Property="Padding"       Value="0,4,0,4"/>
     </Style>
 
-    <!-- Filled ComboBox for detail panel -->
+    <!-- Multiline variant for Notas -->
+    <Style x:Key="DetailTextBoxMultiline" TargetType="TextBox"
+           BasedOn="{StaticResource MaterialDesignTextBox}">
+        <Setter Property="FontSize"      Value="13"/>
+        <Setter Property="TextWrapping"  Value="Wrap"/>
+        <Setter Property="AcceptsReturn" Value="True"/>
+        <Setter Property="Padding"       Value="0,4,0,4"/>
+    </Style>
+
+    <!-- Underline ComboBox for detail panel -->
     <Style x:Key="DetailComboBox" TargetType="ComboBox"
-           BasedOn="{StaticResource MaterialDesignFilledComboBox}">
+           BasedOn="{StaticResource MaterialDesignComboBox}">
         <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Padding"  Value="0,4,0,4"/>
     </Style>
 
-    <!-- Filled DatePicker for detail panel -->
+    <!-- Underline DatePicker for detail panel -->
     <Style x:Key="DetailDatePicker" TargetType="DatePicker"
-           BasedOn="{StaticResource MaterialDesignFilledDatePicker}">
+           BasedOn="{StaticResource MaterialDesignDatePicker}">
         <Setter Property="FontSize" Value="13"/>
     </Style>
 

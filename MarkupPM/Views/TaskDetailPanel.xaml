@@ -55,19 +55,21 @@
                 <StackPanel Margin="16,18,16,12">
 
                     <!-- Task name -->
+                    <TextBlock Text="Nombre de la tarea" Style="{StaticResource DetailFieldLabel}"
+                               Margin="0,0,0,3"/>
                     <TextBox Text="{Binding Nombre, UpdateSourceTrigger=PropertyChanged}"
                              Style="{StaticResource DetailTextBox}"
-                             materialDesign:HintAssist.Hint="Nombre de la tarea"
                              FontSize="14" FontWeight="Medium"
                              TextAlignment="Left"
-                             TextWrapping="Wrap" AcceptsReturn="False"
-                             Margin="0,0,0,18"/>
+                             TextWrapping="Wrap"
+                             AcceptsReturn="False"
+                             Margin="0,0,0,20"/>
 
                     <!-- Estado + Prioridad -->
-                    <Grid Margin="0,0,0,18">
+                    <Grid Margin="0,0,0,16">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="12"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
@@ -87,10 +89,10 @@
                     </Grid>
 
                     <!-- Responsable + Fecha -->
-                    <Grid Margin="0,0,0,18">
+                    <Grid Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="12"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
@@ -98,14 +100,13 @@
                             <TextBlock Text="Responsable" Style="{StaticResource DetailFieldLabel}"/>
                             <TextBox Text="{Binding Responsable, UpdateSourceTrigger=PropertyChanged}"
                                      Style="{StaticResource DetailTextBox}"
-                                     materialDesign:HintAssist.Hint="—"/>
+                                     TextWrapping="NoWrap"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="2">
                             <TextBlock Text="Fecha límite" Style="{StaticResource DetailFieldLabel}"/>
                             <DatePicker SelectedDate="{Binding FechaAsDateTime}"
-                                        Style="{StaticResource DetailDatePicker}"
-                                        materialDesign:HintAssist.Hint="—"/>
+                                        Style="{StaticResource DetailDatePicker}"/>
                         </StackPanel>
                     </Grid>
 
@@ -117,12 +118,10 @@
                     <StackPanel>
                         <TextBlock Text="Notas" Style="{StaticResource DetailFieldLabel}"/>
                         <TextBox Text="{Binding Notas, UpdateSourceTrigger=PropertyChanged}"
-                                 Style="{StaticResource DetailTextBox}"
-                                 AcceptsReturn="True" TextWrapping="Wrap"
+                                 Style="{StaticResource DetailTextBoxMultiline}"
                                  TextAlignment="Left"
                                  MinHeight="100"
-                                 VerticalScrollBarVisibility="Auto"
-                                 materialDesign:HintAssist.Hint="Notas sobre esta tarea..."/>
+                                 VerticalScrollBarVisibility="Auto"/>
                     </StackPanel>
 
                 </StackPanel>
