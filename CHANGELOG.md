@@ -7,6 +7,21 @@ y este proyecto sigue [Semantic Versioning](https://semver.org/lang/es/).
 
 ---
 
+## [0.3.0] - 2026-05-13
+
+### Añadido
+
+- Sidebar lateral redimensionable mediante `GridSplitter`.
+- Política de privacidad en español (`privacy-policy.md`).
+
+### Cambiado
+
+- Sistema de diseño visual modernizado para cumplir los estándares de Microsoft Store (paleta de colores, tipografía, espaciados).
+- Panel de detalle de tarea rediseñado con inputs con fondo, etiquetas explícitas y sin solapamiento de hints.
+- Nombres de tareas y fases ahora pueden expandirse a múltiples líneas.
+
+---
+
 ## [0.2.0] - 2026-05-13
 
 ### Añadido
@@ -70,6 +85,7 @@ y este proyecto sigue [Semantic Versioning](https://semver.org/lang/es/).
 
 ---
 
+[0.3.0]: https://github.com/FJCF76/MarkupPM/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/FJCF76/MarkupPM/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/FJCF76/MarkupPM/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/FJCF76/MarkupPM/releases/tag/v0.1.0
