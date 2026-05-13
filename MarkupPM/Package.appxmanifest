@@ -6,7 +6,7 @@
   IgnorableNamespaces="uap rescap">
 
   <Identity
-    Name="FJCF76.MarkupPM"
+    Name="FernandoCovecino.MarkupPM"
     Publisher="CN=15FD663E-D585-410B-9B3C-C709530D3E9F"
     Version="1.0.0.0"
     ProcessorArchitecture="x64" />
