@@ -54,8 +54,8 @@ jobs:
 
       - name: Create self-signed cert
         run: |
-          $cert = New-SelfSignedCertificate -Type Custom -Subject "CN=MarkupPM-Dev" `
-            -KeyUsage DigitalSignature -FriendlyName "MarkupPM Dev" `
+          $cert = New-SelfSignedCertificate -Type Custom -Subject "CN=15FD663E-D585-410B-9B3C-C709530D3E9F" `
+            -KeyUsage DigitalSignature -FriendlyName "MarkupPM Store" `
             -CertStoreLocation "Cert:\CurrentUser\My" `
             -TextExtension @("2.5.29.37={text}1.3.6.1.5.5.7.3.3", "2.5.29.19={text}")
           $pwd = ConvertTo-SecureString -String "DevOnly" -Force -AsPlainText
@@ -89,8 +89,7 @@ jobs:
           $manifest = Get-Content $manifestSource -Raw
           $manifest = $manifest.TrimStart([char]0xFEFF)
           $manifest = [regex]::Replace($manifest, '^\s*<\?xml.*?\?>', '<?xml version="1.0" encoding="utf-8"?>')
-          $manifest = $manifest -replace 'Name="PLACEHOLDER.MarkupPM"', 'Name="FJCF76.MarkupPM"'
-          $manifest = $manifest -replace 'Publisher="CN=PLACEHOLDER"', 'Publisher="CN=MarkupPM-Dev"'
+          # Identity fields already correct in Package.appxmanifest — no replacement needed
           $manifest = $manifest -replace 'Executable="\$targetnametoken\$\.exe"', 'Executable="MarkupPM.exe"'
           $manifest = $manifest -replace 'EntryPoint="\$targetentrypoint\$"', 'EntryPoint="Windows.FullTrustApplication"'
           [System.IO.File]::WriteAllText($manifestOut, $manifest, (New-Object System.Text.UTF8Encoding($false)))

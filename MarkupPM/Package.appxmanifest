@@ -6,14 +6,14 @@
   IgnorableNamespaces="uap rescap">
 
   <Identity
-    Name="PLACEHOLDER.MarkupPM"
-    Publisher="CN=PLACEHOLDER"
+    Name="FJCF76.MarkupPM"
+    Publisher="CN=15FD663E-D585-410B-9B3C-C709530D3E9F"
     Version="1.0.0.0"
     ProcessorArchitecture="x64" />
 
   <Properties>
     <DisplayName>MarkupPM</DisplayName>
-    <PublisherDisplayName>Fernando J. Collazos</PublisherDisplayName>
+    <PublisherDisplayName>Fernando Covecino</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
