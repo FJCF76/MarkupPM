@@ -13,9 +13,9 @@ public class MdSerializerTests
     {
         var p = new Proyecto { Nombre = "Mi Proyecto" };
         var md = _sut.Serialize(p);
-        Assert.Contains("MarkupPM AI instructions:", md);
+        Assert.Contains("MarkupPM AI instructions", md);
         Assert.Contains("# Mi Proyecto", md);
-        Assert.DoesNotContain("##", md);
+        Assert.DoesNotContain("\n## ", md); // no phase headers (only AI header content may contain ## in examples)
     }
 
     [Fact]

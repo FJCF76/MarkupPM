@@ -228,21 +228,24 @@ public class MdSerializer : IMdSerializer
         "-->"
     ];
 
+    private static StringBuilder AppL(StringBuilder sb, string s) => sb.Append(s).Append('\n');
+    private static StringBuilder AppL(StringBuilder sb) => sb.Append('\n');
+
     public string Serialize(Proyecto proyecto)
     {
         var sb = new StringBuilder();
 
         foreach (var headerLine in AiHeaderLines)
-            sb.AppendLine(headerLine);
+            AppL(sb, headerLine);
 
-        sb.AppendLine();
-        sb.AppendLine($"# {EscapeInline(proyecto.Nombre)}");
+        AppL(sb);
+        AppL(sb, $"# {EscapeInline(proyecto.Nombre)}");
 
         foreach (var fase in proyecto.Fases)
         {
-            sb.AppendLine();
-            sb.AppendLine($"## {EscapeInline(fase.Nombre)}");
-            sb.AppendLine($"<!-- phase-id: {fase.Id} -->");
+            AppL(sb);
+            AppL(sb, $"## {EscapeInline(fase.Nombre)}");
+            AppL(sb, $"<!-- phase-id: {fase.Id} -->");
 
             foreach (var tarea in fase.Tareas)
             {
@@ -252,13 +255,14 @@ public class MdSerializer : IMdSerializer
                 var fecha = tarea.Fecha?.ToString("yyyy-MM-dd") ?? "";
                 var deps = string.Join(",", tarea.Dependencias);
 
-                sb.AppendLine();
-                sb.AppendLine($"- {estado} {EscapeInline(tarea.Nombre)}  <!-- id:{tarea.Id} prio:{prio} resp:{resp} fecha:{fecha} dep:{deps} -->");
+                AppL(sb);
+                AppL(sb, $"- {estado} {EscapeInline(tarea.Nombre)}  <!-- id:{tarea.Id} prio:{prio} resp:{resp} fecha:{fecha} dep:{deps} -->");
 
                 if (!string.IsNullOrWhiteSpace(tarea.Notas))
                 {
-                    foreach (var line in tarea.Notas.Split('\n'))
-                        sb.AppendLine($"  {line.TrimEnd()}");
+                    var normalizedNotas = tarea.Notas.Replace("\r\n", "\n").Replace("\r", "\n");
+                    foreach (var line in normalizedNotas.Split('\n'))
+                        AppL(sb, $"  {line.TrimEnd()}");
                 }
             }
         }

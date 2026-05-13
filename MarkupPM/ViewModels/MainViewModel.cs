@@ -91,7 +91,8 @@ public partial class MainViewModel : ObservableObject, IDropTarget
     {
         try
         {
-            var md = File.ReadAllText(path);
+            var raw = File.ReadAllText(path);
+            var md = raw.Replace("\r\n", "\n").Replace("\r", "\n");
             Proyecto = _parser.Parse(md);
             FilePath = path;
             _recentFiles.AddRecent(path);
