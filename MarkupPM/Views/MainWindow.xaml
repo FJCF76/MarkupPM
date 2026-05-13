@@ -135,13 +135,14 @@
         <!-- ══════════════════════ MAIN AREA ══════════════════════ -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="220" MinWidth="160" MaxWidth="300"/>
+                <ColumnDefinition x:Name="SidebarColumn" Width="220" MinWidth="140" MaxWidth="480"/>
+                <ColumnDefinition Width="4"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
             <!-- Welcome screen (no project) -->
-            <views:WelcomeView Grid.Column="0" Grid.ColumnSpan="3"
+            <views:WelcomeView Grid.Column="0" Grid.ColumnSpan="4"
                                DataContext="{Binding WelcomeVm}"
                                Visibility="{Binding DataContext.HasProyecto, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource InvBoolToVis}}"/>
 
@@ -221,8 +222,17 @@
                 </StackPanel>
             </Border>
 
+            <!-- ── SIDEBAR RESIZE SPLITTER ── -->
+            <GridSplitter Grid.Column="1"
+                          Width="4"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          Background="Transparent"
+                          Cursor="SizeWE"
+                          Visibility="{Binding HasProyecto, Converter={StaticResource BoolToVis}}"/>
+
             <!-- ── PHASES + TASKS LIST ── -->
-            <Grid Grid.Column="1"
+            <Grid Grid.Column="2"
                   Visibility="{Binding HasProyecto, Converter={StaticResource BoolToVis}}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -501,7 +511,7 @@
             </Grid>
 
             <!-- ── TASK DETAIL PANEL ── -->
-            <views:TaskDetailPanel Grid.Column="2"
+            <views:TaskDetailPanel Grid.Column="3"
                                    DataContext="{Binding SelectedTarea}"
                                    Visibility="{Binding DataContext.SelectedTarea, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource NotNullToVis}}"/>
         </Grid>
