@@ -23,10 +23,14 @@ public partial class MainViewModel : ObservableObject, IDropTarget
     [ObservableProperty] private string? _filePath;
     [ObservableProperty] private bool _hasProyecto;
     [ObservableProperty] private bool _isEditingProjectName;
+    [ObservableProperty] private FaseViewModel? _selectedFase;
 
     public WelcomeViewModel WelcomeVm { get; }
 
     public ObservableCollection<FaseViewModel> Fases { get; } = [];
+
+    public IEnumerable<FaseViewModel> FilteredFases =>
+        SelectedFase is null ? Fases : Fases.Where(f => f == SelectedFase);
 
     public bool HasFases => Fases.Count > 0;
 
@@ -57,6 +61,7 @@ public partial class MainViewModel : ObservableObject, IDropTarget
         {
             OnPropertyChanged(nameof(HasFases));
             OnPropertyChanged(nameof(TotalTareas));
+            OnPropertyChanged(nameof(FilteredFases));
         };
     }
 
@@ -70,6 +75,7 @@ public partial class MainViewModel : ObservableObject, IDropTarget
         HasProyecto = true;
         IsDirty = true;
         SelectedTarea = null;
+        SelectedFase = null;
         OnPropertyChanged(nameof(TituloVentana));
         OnPropertyChanged(nameof(FileNameDisplay));
     }
@@ -168,6 +174,11 @@ public partial class MainViewModel : ObservableObject, IDropTarget
         Fases.Remove(faseVm);
         if (SelectedTarea is not null && faseVm.Tareas.Contains(SelectedTarea))
             SelectedTarea = null;
+        if (SelectedFase == faseVm)
+        {
+            SelectedFase = null;
+            OnPropertyChanged(nameof(FilteredFases));
+        }
         MarkDirty();
     }
 
@@ -183,7 +194,12 @@ public partial class MainViewModel : ObservableObject, IDropTarget
         vm.Tareas.CollectionChanged -= FaseTareas_CollectionChanged;
     }
 
-    private void FaseVm_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e) => MarkDirty();
+    private void FaseVm_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is nameof(FaseViewModel.IsFilterSelected))
+            return;
+        MarkDirty();
+    }
     private void FaseTareas_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e) => OnPropertyChanged(nameof(TotalTareas));
 
     [RelayCommand]
@@ -296,6 +312,26 @@ public partial class MainViewModel : ObservableObject, IDropTarget
             SubscribeFase(vm);
             Fases.Add(vm);
         }
+        SelectedFase = null;
+    }
+
+    [RelayCommand]
+    public void SelectFaseFilter(FaseViewModel? faseVm)
+    {
+        if (SelectedFase is not null)
+            SelectedFase.IsFilterSelected = false;
+
+        SelectedFase = SelectedFase == faseVm ? null : faseVm;
+
+        if (SelectedFase is not null)
+            SelectedFase.IsFilterSelected = true;
+
+        OnPropertyChanged(nameof(FilteredFases));
+    }
+
+    partial void OnSelectedFaseChanged(FaseViewModel? value)
+    {
+        OnPropertyChanged(nameof(FilteredFases));
     }
 
     private void EscribirArchivo(string path)

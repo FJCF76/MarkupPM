@@ -150,21 +150,50 @@
                 <StackPanel Margin="12">
                     <TextBlock Text="PROYECTO" Style="{StaticResource StatusBarText}"
                                FontWeight="SemiBold" Margin="4,0,0,8"/>
-                    <StackPanel Orientation="Horizontal" Margin="8,6">
-                        <materialDesign:PackIcon Kind="ClipboardTextOutline" Width="16" Height="16"
-                                                  VerticalAlignment="Center" Margin="0,0,6,0"
-                                                  Foreground="{DynamicResource MaterialDesign.Brush.ForegroundLight}"/>
-                        <TextBlock Text="Todas las tareas" FontSize="12" VerticalAlignment="Center"/>
-                    </StackPanel>
+                    <Button Style="{StaticResource MaterialDesignFlatButton}"
+                            Command="{Binding SelectFaseFilterCommand}"
+                            CommandParameter="{x:Null}"
+                            HorizontalContentAlignment="Left" Padding="4,6"
+                            Foreground="{DynamicResource MaterialDesign.Brush.Foreground}">
+                        <Button.Resources>
+                            <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding SelectedFase}" Value="{x:Null}">
+                                        <Setter Property="Foreground" Value="{DynamicResource ActionAccentBrush}"/>
+                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Resources>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Todas las tareas" FontSize="12" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
                     <Separator Margin="0,8"/>
                     <TextBlock Text="FASES" Style="{StaticResource StatusBarText}"
                                FontWeight="SemiBold" Margin="4,0,0,8"/>
                     <ItemsControl ItemsSource="{Binding Fases}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Nombre}" TextTrimming="CharacterEllipsis"
-                                           ToolTip="{Binding Nombre}"
-                                           Padding="8,8" FontSize="12"/>
+                                <Button Style="{StaticResource MaterialDesignFlatButton}"
+                                        Command="{Binding DataContext.SelectFaseFilterCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                        CommandParameter="{Binding}"
+                                        HorizontalContentAlignment="Left" Padding="8,6"
+                                        Foreground="{DynamicResource MaterialDesign.Brush.Foreground}">
+                                    <Button.Resources>
+                                        <Style TargetType="Button" BasedOn="{StaticResource MaterialDesignFlatButton}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsFilterSelected}" Value="True">
+                                                    <Setter Property="Foreground" Value="{DynamicResource ActionAccentBrush}"/>
+                                                    <Setter Property="FontWeight" Value="SemiBold"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Resources>
+                                    <TextBlock Text="{Binding Nombre}" TextTrimming="CharacterEllipsis"
+                                               ToolTip="{Binding Nombre}"
+                                               FontSize="12"/>
+                                </Button>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
@@ -246,7 +275,7 @@
                               FocusVisualStyle="{x:Null}"
                               KeyboardNavigation.TabNavigation="None"
                               Visibility="{Binding HasFases, Converter={StaticResource BoolToVis}}">
-                    <ItemsControl ItemsSource="{Binding Fases}"
+                    <ItemsControl ItemsSource="{Binding FilteredFases}"
                                   Focusable="False"
                                   IsTabStop="False"
                                   FocusVisualStyle="{x:Null}">

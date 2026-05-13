@@ -14,6 +14,7 @@ public partial class FaseViewModel : ObservableObject
     [ObservableProperty] private string _nombre;
     [ObservableProperty] private bool _isExpanded = true;
     [ObservableProperty] private bool _isEditingName;
+    [ObservableProperty] private bool _isFilterSelected;
 
     public ObservableCollection<TareaViewModel> Tareas { get; }
 
