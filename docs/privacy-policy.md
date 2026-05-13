@@ -1,6 +1,7 @@
 # Directiva de Privacidad — MarkupPM
 
 **Última actualización:** junio de 2025
+
 **Desarrollador:** Fernando Covecino
 
 ---
