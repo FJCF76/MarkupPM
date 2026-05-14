@@ -1,0 +1,105 @@
+<Window x:Class="MarkupPM.Views.OpenFileDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Title="Abrir proyecto"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="CanResize"
+        ShowInTaskbar="False"
+        Width="560" Height="400"
+        MinWidth="400" MinHeight="300"
+        Background="{DynamicResource SurfacePageBrush}"
+        TextElement.Foreground="{DynamicResource TextPrimaryBrush}">
+    <Border Padding="24,20,24,20">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="Abrir proyecto Markdown"
+                       FontSize="15" FontWeight="SemiBold"
+                       Margin="0,0,0,12"
+                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+
+            <TextBox x:Name="SearchBox"
+                     Grid.Row="1"
+                     FontSize="13"
+                     Padding="8,7"
+                     Margin="0,0,0,10"
+                     Background="{DynamicResource SurfaceCardBrush}"
+                     BorderBrush="{DynamicResource DividerBrush}"
+                     materialDesign:HintAssist.Hint="Buscar proyecto..."
+                     TextChanged="SearchBox_TextChanged"/>
+
+            <ListBox x:Name="FileList"
+                     Grid.Row="2"
+                     Background="{DynamicResource SurfaceCardBrush}"
+                     BorderThickness="1"
+                     BorderBrush="{DynamicResource DividerBrush}"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     MouseDoubleClick="FileList_MouseDoubleClick"
+                     SelectionChanged="FileList_SelectionChanged">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" Margin="4,6">
+                            <materialDesign:PackIcon Kind="FileDocumentOutline"
+                                                     Width="18" Height="18"
+                                                     VerticalAlignment="Center"
+                                                     Foreground="{DynamicResource PrimaryBrush}"
+                                                     Margin="0,0,10,0"/>
+                            <TextBlock Text="{Binding Name}"
+                                       FontSize="13"
+                                       VerticalAlignment="Center"
+                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+                            <TextBlock Text="{Binding LastWriteTime, StringFormat=' — {0:dd/MM/yyyy HH:mm}'}"
+                                       FontSize="11"
+                                       VerticalAlignment="Center"
+                                       Foreground="{DynamicResource TextSecondaryBrush}"
+                                       Margin="6,0,0,0"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <TextBlock x:Name="EmptyText"
+                       Grid.Row="2"
+                       Text="No hay archivos .md en LocalState"
+                       FontSize="13"
+                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                       Foreground="{DynamicResource TextSecondaryBrush}"
+                       Visibility="Collapsed"/>
+
+            <TextBox x:Name="PathBox"
+                     Grid.Row="3"
+                     Margin="0,12,0,0"
+                     FontSize="12"
+                     IsReadOnly="True"
+                     Background="{DynamicResource SurfaceCardBrush}"
+                     BorderBrush="{DynamicResource DividerBrush}"
+                     Foreground="{DynamicResource TextSecondaryBrush}"
+                     Padding="8,6"/>
+
+            <StackPanel Grid.Row="4"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Margin="0,16,0,0">
+                <Button x:Name="CancelBtn"
+                        Content="Cancelar"
+                        IsCancel="True"
+                        Padding="16,7"
+                        Margin="0,0,8,0"
+                        Click="CancelBtn_Click"/>
+                <Button x:Name="OpenBtn"
+                        Content="Abrir"
+                        IsDefault="True"
+                        IsEnabled="False"
+                        Padding="16,7"
+                        Click="OpenBtn_Click"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

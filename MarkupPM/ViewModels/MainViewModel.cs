@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -7,7 +8,8 @@ using GongSolutions.Wpf.DragDrop;
 using MarkupPM.Models;
 using MarkupPM.Services;
 using MarkupPM.Views;
-using Microsoft.Win32;
+using Windows.Storage;
+using Windows.System;
 
 namespace MarkupPM.ViewModels;
 
@@ -98,19 +100,30 @@ public partial class MainViewModel : ObservableObject, IDropTarget
     }
 
     [RelayCommand]
-    public void AbrirDialogo()
+    public async Task AbrirDialogo()
     {
         if (!ConfirmarDescartarCambios()) return;
-        var dlg = new OpenFileDialog
-        {
-            Filter = "Proyectos Markdown (*.md)|*.md|Todos los archivos (*.*)|*.*",
-            Title = "Abrir proyecto MarkupPM"
-        };
-        if (dlg.ShowDialog() == true)
-            AbrirArchivo(dlg.FileName);
+
+        var dialog = new Views.OpenFileDialog();
+        if (dialog.ShowDialog() == true && dialog.SelectedPath is not null)
+            await AbrirArchivo(dialog.SelectedPath);
     }
 
-    public void AbrirArchivo(string path)
+    [RelayCommand]
+    public async Task AbrirCarpeta()
+    {
+        var folder = ApplicationData.Current.LocalFolder.Path;
+        try
+        {
+            Process.Start(new ProcessStartInfo("explorer.exe", $"\"{folder}\"") { UseShellExecute = true });
+        }
+        catch
+        {
+            await Launcher.LaunchFolderPathAsync(folder);
+        }
+    }
+
+    public async Task AbrirArchivo(string path)
     {
         try
         {
@@ -118,7 +131,7 @@ public partial class MainViewModel : ObservableObject, IDropTarget
             var md = raw.Replace("\r\n", "\n").Replace("\r", "\n");
             Proyecto = _parser.Parse(md);
             FilePath = path;
-            _recentFiles.AddRecent(path);
+            await _recentFiles.AddRecent(path);
             WelcomeVm.RefreshRecientes();
             RebuildFases();
             HasProyecto = true;
@@ -134,29 +147,45 @@ public partial class MainViewModel : ObservableObject, IDropTarget
     }
 
     [RelayCommand(CanExecute = nameof(HasProyecto))]
-    public void Guardar()
+    public async Task Guardar()
     {
         if (FilePath is null)
-            GuardarComo();
+        {
+            // No path yet: save directly to LocalState using the project name, no dialog
+            var nombre = SanitizeFileName(Proyecto?.Nombre) ?? "proyecto";
+            var localState = Windows.Storage.ApplicationData.Current.LocalFolder.Path;
+            var path = Path.Combine(localState, nombre + ".md");
+            if (File.Exists(path))
+            {
+                var dlg = new Views.OverwriteConfirmDialog(nombre + ".md");
+                if (dlg.ShowDialog() != true) return;
+            }
+            EscribirArchivo(path);
+        }
         else
+        {
             EscribirArchivo(FilePath);
+        }
+        await Task.CompletedTask;
     }
 
     [RelayCommand(CanExecute = nameof(HasProyecto))]
-    public void GuardarComo()
+    public async Task GuardarComo()
     {
-        var dlg = new SaveFileDialog
-        {
-            Filter = "Proyectos Markdown (*.md)|*.md",
-            FileName = Proyecto?.Nombre ?? "proyecto",
-            Title = "Guardar proyecto como"
-        };
-        if (dlg.ShowDialog() == true)
-        {
-            if (Proyecto is not null && string.IsNullOrEmpty(Proyecto.Nombre))
-                Proyecto.Nombre = Path.GetFileNameWithoutExtension(dlg.FileName);
-            EscribirArchivo(dlg.FileName);
-        }
+        var dialog = new Views.SaveFileDialog(Proyecto?.Nombre ?? "proyecto");
+        if (dialog.ShowDialog() != true) return;
+
+        if (Proyecto is not null && string.IsNullOrEmpty(Proyecto.Nombre))
+            Proyecto.Nombre = Path.GetFileNameWithoutExtension(dialog.SelectedPath!);
+        EscribirArchivo(dialog.SelectedPath!);
+        await Task.CompletedTask;
+    }
+
+    private static string? SanitizeFileName(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return null;
+        var invalid = Path.GetInvalidFileNameChars();
+        return string.Concat(name.Select(c => invalid.Contains(c) ? '_' : c)).Trim();
     }
 
     [RelayCommand]
@@ -306,7 +335,7 @@ public partial class MainViewModel : ObservableObject, IDropTarget
 
     private bool SaveBeforeContinuing()
     {
-        Guardar();
+        _ = Guardar();
         return !IsDirty;
     }
 
@@ -351,7 +380,7 @@ public partial class MainViewModel : ObservableObject, IDropTarget
             var md = _serializer.Serialize(Proyecto!);
             File.WriteAllText(path, md);
             FilePath = path;
-            _recentFiles.AddRecent(path);
+            _recentFiles.AddRecent(path).ContinueWith(_ => { });
             WelcomeVm.RefreshRecientes();
             IsDirty = false;
             OnPropertyChanged(nameof(TituloVentana));
@@ -430,4 +459,5 @@ public partial class MainViewModel : ObservableObject, IDropTarget
 
         MarkDirty();
     }
-}
+
+    }

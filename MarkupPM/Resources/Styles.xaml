@@ -44,6 +44,8 @@
     <SolidColorBrush x:Key="PriorityLowFg"            Color="#2E7D32"/>
 
     <!-- Utility -->
+    <SolidColorBrush x:Key="WarningBrush"             Color="#E65100"/>
+    <SolidColorBrush x:Key="WarningLightBrush"        Color="#FFF3E0"/>
     <SolidColorBrush x:Key="UnsavedIndicatorBrush"    Color="#FB8C00"/>
     <SolidColorBrush x:Key="OverdueDateBrush"         Color="#D32F2F"/>
     <SolidColorBrush x:Key="DangerForegroundBrush"    Color="#C62828"/>

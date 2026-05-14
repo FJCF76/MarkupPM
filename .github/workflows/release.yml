@@ -97,7 +97,7 @@ jobs:
           $manifest = [regex]::Replace($manifest, '^\s*<\?xml.*?\?>', '<?xml version="1.0" encoding="utf-8"?>')
           # Identity fields already correct in Package.appxmanifest — no replacement needed
           $manifest = $manifest -replace 'Executable="\$targetnametoken\$\.exe"', 'Executable="MarkupPM.exe"'
-          $manifest = $manifest -replace 'EntryPoint="\$targetentrypoint\$"', 'EntryPoint="Windows.FullTrustApplication"'
+          $manifest = $manifest -replace 'EntryPoint="\$targetentrypoint\$"', 'EntryPoint="Windows.PartialTrustApplication"'
           [System.IO.File]::WriteAllText($manifestOut, $manifest, (New-Object System.Text.UTF8Encoding($false)))
 
           $makeAppx = Get-ChildItem "C:\Program Files (x86)\Windows Kits\10\bin" -Recurse -Filter makeappx.exe |

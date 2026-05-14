@@ -8,9 +8,9 @@ namespace MarkupPM.ViewModels;
 public partial class WelcomeViewModel : ObservableObject
 {
     private readonly IRecentFilesService _recentFiles;
-    public Action<string>? OnOpenRecent { get; set; }
+    public Func<string, Task>? OnOpenRecent { get; set; }
     public Action? OnNuevoProyecto { get; set; }
-    public Action? OnAbrirArchivo { get; set; }
+    public Func<Task>? OnAbrirArchivo { get; set; }
 
     public ObservableCollection<string> Recientes { get; } = [];
 
@@ -34,8 +34,16 @@ public partial class WelcomeViewModel : ObservableObject
     private void NuevoProyecto() => OnNuevoProyecto?.Invoke();
 
     [RelayCommand]
-    private void AbrirArchivo() => OnAbrirArchivo?.Invoke();
+    private async Task AbrirArchivo()
+    {
+        if (OnAbrirArchivo is not null)
+            await OnAbrirArchivo();
+    }
 
     [RelayCommand]
-    private void AbrirReciente(string path) => OnOpenRecent?.Invoke(path);
+    private async Task AbrirReciente(string path)
+    {
+        if (OnOpenRecent is not null)
+            await OnOpenRecent(path);
+    }
 }

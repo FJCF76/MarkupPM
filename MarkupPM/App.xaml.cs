@@ -31,11 +31,11 @@ public partial class App : Application
         AbrirArchivoDirecto(path);
     }
 
-    public static void AbrirArchivoDirecto(string filePath)
+    public static async void AbrirArchivoDirecto(string filePath)
     {
         if (Current.MainWindow?.DataContext is MainViewModel vm)
         {
-            vm.AbrirArchivo(filePath);
+            await vm.AbrirArchivo(filePath);
         }
     }
 }
