@@ -20,6 +20,8 @@ packages/
 # MSIX / publish
 AppPackages/
 BundleArtifacts/
+artifacts/
+layout/
 *.msix
 *.msixbundle
 *.msixupload
